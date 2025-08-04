@@ -48,7 +48,8 @@ const FloatingChatbot: React.FC = () => {
           },
           body: JSON.stringify({
             message: userMessage.text,
-            model: 'groq' // Static model as requested
+            model: 'groq',
+            systemPrompt: 'You are a helpful NCO career assistant. Provide accurate and helpful information about job classifications, career guidance, and NCO codes.'
           }),
         });
         
@@ -64,7 +65,8 @@ const FloatingChatbot: React.FC = () => {
           },
           body: JSON.stringify({
             message: userMessage.text,
-            model: 'groq' // Static model as requested
+            model: 'groq',
+            systemPrompt: 'You are a helpful NCO career assistant. Provide accurate and helpful information about job classifications, career guidance, and NCO codes.'
           }),
         });
       }
