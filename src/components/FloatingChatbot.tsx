@@ -41,7 +41,7 @@ const FloatingChatbot: React.FC = () => {
       // Try proxy first, then fallback to direct connection
       let response;
       try {
-        response = await fetch('/api/langchain/chat', {
+        response = await fetch('https://statethon-backend.onrender.com/api/langchain/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
