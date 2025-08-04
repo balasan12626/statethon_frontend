@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Groq LLM API Collection",
+    "description": "Complete Postman collection for testing Groq LLM integration endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "health"]
+        },
+        "description": "Check if the LangChain API and Groq model are properly configured"
+      }
+    },
+    {
+      "name": "Get Available Models",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/models",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "models"]
+        },
+        "description": "Get information about available LLM models"
+      }
+    },
+    {
+      "name": "Chat with Groq",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Hello! Can you help me understand machine learning?\",\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a helpful AI assistant that explains complex topics in simple terms.\",\n  \"conversationHistory\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat"]
+        },
+        "description": "Send a chat message to Groq LLM and get a response"
+      }
+    },
+    {
+      "name": "Chat with Conversation History",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What was my previous question?\",\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a helpful AI assistant.\",\n  \"conversationHistory\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello! Can you help me understand machine learning?\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Of course! Machine learning is a subset of artificial intelligence that enables computers to learn and improve from experience without being explicitly programmed.\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat"]
+        },
+        "description": "Chat with Groq using conversation history for context"
+      }
+    },
+    {
+      "name": "Streaming Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Write a short story about a robot learning to paint.\",\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a creative storyteller.\",\n  \"conversationHistory\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat", "stream"]
+        },
+        "description": "Get streaming response from Groq LLM (use in Postman with streaming enabled)"
+      }
+    },
+    {
+      "name": "Batch Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"messages\": [\n    \"What is Python?\",\n    \"What is JavaScript?\",\n    \"What is the difference between Python and JavaScript?\"\n  ],\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a programming expert. Provide concise and accurate answers.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat/batch",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat", "batch"]
+        },
+        "description": "Process multiple messages in a single request"
+      }
+    },
+    {
+      "name": "Job Matching Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"I have experience in Python, JavaScript, and React. What kind of jobs would be suitable for me?\",\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a career advisor specializing in tech jobs. Analyze the user's skills and suggest relevant job opportunities with brief explanations.\",\n  \"conversationHistory\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat"]
+        },
+        "description": "Test job matching functionality with Groq LLM"
+      }
+    },
+    {
+      "name": "Code Review Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Can you review this code: function add(a, b) { return a + b; }\",\n  \"model\": \"groq\",\n  \"systemPrompt\": \"You are a senior software engineer. Review code for best practices, potential issues, and improvements.\",\n  \"conversationHistory\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/langchain/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "langchain", "chat"]
+        },
+        "description": "Test code review functionality with Groq LLM"
+      }
+    }
+  ]
+} 

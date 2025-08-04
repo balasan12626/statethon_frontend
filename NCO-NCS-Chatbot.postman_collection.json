@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "NCO/NCS Chatbot API",
+    "description": "Testing NCO/NCS focused chat with enhanced system prompt",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "NCO Code Question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is NCO code 20215?\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "JavaScript Question (Should be rejected)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Tell me about JavaScript programming\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "NCS Portal Question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"How can I apply for jobs through NCS portal?\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Career Guidance Question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What are the duties in NCO 20215 job?\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Python Question (Should be rejected)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is Python programming?\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Job Duties Question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What skills are required for NCO 20215 position?\",\n  \"model\": \"groq\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/langchain/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "langchain", "chat"]
+        }
+      },
+      "response": []
+    }
+  ]
+} 
