@@ -51,6 +51,11 @@ const FloatingChatbot: React.FC = () => {
             model: 'groq' // Static model as requested
           }),
         });
+        
+        // If proxy returns 404 or other error, try direct connection
+        if (!response.ok) {
+          throw new Error('Proxy failed');
+        }
       } catch (proxyError) {
         response = await fetch('https://statethon-backend.onrender.com/api/langchain/chat', {
           method: 'POST',
