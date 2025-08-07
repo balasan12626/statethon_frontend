@@ -25,7 +25,7 @@ const About = () => {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Mission</h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                The UAE National Classification of Occupation (NCO) system serves as the cornerstone for standardizing job classifications across the nation. Our platform leverages cutting-edge artificial intelligence to make this complex system accessible to everyone.
+                The National Classification of Occupation (NCO) system serves as the cornerstone for standardizing job classifications across the nation. Our platform leverages cutting-edge artificial intelligence to make this complex system accessible to everyone.
               </p>
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                 We believe that finding the right occupation code shouldn't require extensive manual searching through thousands of categories. Our AI-powered semantic search understands natural language descriptions and matches them with the most appropriate NCO codes.
