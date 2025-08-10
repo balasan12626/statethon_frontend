@@ -1,10 +1,6 @@
 import i18next from 'i18next';
 
-// Interface for translation providers
-interface TranslationProvider {
-  translate: (text: string, from: string, to: string) => Promise<string>;
-  detectLanguage?: (text: string) => Promise<string>;
-}
+// Translation provider interface removed
 
 // Google Translate helper
 const googleTranslate = {

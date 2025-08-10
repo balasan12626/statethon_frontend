@@ -20,7 +20,7 @@ const LanguageSwitcher: React.FC = () => {
     return () => clearInterval(interval);
   }, [currentLang]);
 
-  const filteredLanguages = Object.entries(INDIAN_LANGUAGES).filter(([code, lang]) =>
+  const filteredLanguages = Object.entries(INDIAN_LANGUAGES).filter(([_code, lang]) =>
     searchTerm === '' ||
     lang.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     lang.nativeName.toLowerCase().includes(searchTerm.toLowerCase())

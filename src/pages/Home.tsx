@@ -296,7 +296,7 @@ const Home = () => {
     const checkBackend = async () => {
       try {
         const isConnected = await checkBackendConnection();
-        setBackendStatus(isConnected ? 'connected' : 'disconnected');
+        // setBackendStatus removed
       } catch (err) {
         console.error('Backend check failed:', err);
         // setBackendStatus removed
