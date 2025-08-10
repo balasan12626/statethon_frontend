@@ -1,7 +1,9 @@
 
-import { Twitter, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Twitter, Linkedin, Youtube, Mail, Phone, MapPin, Wifi, WifiOff } from 'lucide-react';
+import { useBackendStatus } from '../contexts/BackendStatusContext';
 
 const Footer = () => {
+  const { backendStatus } = useBackendStatus();
   return (
     <footer className="bg-slate-800 dark:bg-gray-900 text-white border-t border-gray-700 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -101,6 +103,24 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-700 dark:border-gray-800 mt-8 pt-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            {backendStatus === 'connected' ? (
+              <div className="flex items-center gap-2 text-green-500">
+                <Wifi className="w-4 h-4" />
+                <span className="text-sm">Backend Connected</span>
+              </div>
+            ) : backendStatus === 'disconnected' ? (
+              <div className="flex items-center gap-2 text-red-500">
+                <WifiOff className="w-4 h-4" />
+                <span className="text-sm">Backend Offline</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-yellow-500">
+                <div className="w-4 h-4 animate-pulse rounded-full bg-yellow-500" />
+                <span className="text-sm">Checking Connection...</span>
+              </div>
+            )}
+          </div>
           <p className="text-gray-400 dark:text-gray-500 text-sm">
             © 2025 Ministry of Statistics and Programme Implementation, Government of India. All rights reserved.
           </p>

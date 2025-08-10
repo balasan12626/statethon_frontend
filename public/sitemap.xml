@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://your-domain.com/</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://your-domain.com/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://your-domain.com/hi" />
+    <xhtml:link rel="alternate" hreflang="bn-IN" href="https://your-domain.com/bn" />
+    <xhtml:link rel="alternate" hreflang="te-IN" href="https://your-domain.com/te" />
+    <xhtml:link rel="alternate" hreflang="ta-IN" href="https://your-domain.com/ta" />
+    <xhtml:link rel="alternate" hreflang="ml-IN" href="https://your-domain.com/ml" />
+    <xhtml:link rel="alternate" hreflang="kn-IN" href="https://your-domain.com/kn" />
+    <xhtml:link rel="alternate" hreflang="gu-IN" href="https://your-domain.com/gu" />
+    <xhtml:link rel="alternate" hreflang="pa-IN" href="https://your-domain.com/pa" />
+    <xhtml:link rel="alternate" hreflang="or-IN" href="https://your-domain.com/or" />
+    <xhtml:link rel="alternate" hreflang="as-IN" href="https://your-domain.com/as" />
+    <xhtml:link rel="alternate" hreflang="mr-IN" href="https://your-domain.com/mr" />
+    <xhtml:link rel="alternate" hreflang="sa-IN" href="https://your-domain.com/sa" />
+  </url>
+
+  <!-- About Page -->
+  <url>
+    <loc>https://your-domain.com/about</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://your-domain.com/about" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://your-domain.com/about/hi" />
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://your-domain.com/contact</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://your-domain.com/contact" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://your-domain.com/contact/hi" />
+  </url>
+
+  <!-- Search Page -->
+  <url>
+    <loc>https://your-domain.com/search</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://your-domain.com/search" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://your-domain.com/search/hi" />
+  </url>
+
+  <!-- NCO Code Categories (example pages) -->
+  <url>
+    <loc>https://your-domain.com/nco-codes/education</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://your-domain.com/nco-codes/technology</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://your-domain.com/nco-codes/healthcare</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://your-domain.com/nco-codes/manufacturing</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://your-domain.com/nco-codes/finance</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

@@ -15,6 +15,20 @@
   to = "/index.html"
   status = 200
 
+# Proxy cloud backend to avoid CORS in production
+[[redirects]]
+  from = "/api-cloud/*"
+  to = "https://statethon-fastapi-backend.onrender.com/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/api-cloud/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
 # Headers for better security and caching
 [[headers]]
   for = "/*"

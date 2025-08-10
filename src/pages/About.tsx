@@ -68,7 +68,7 @@ const About = () => {
       <div className="bg-white dark:bg-gray-800 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Why Choose UAE NCO?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Why Choose NCO India?</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Our platform combines government standards with modern technology to deliver unparalleled accuracy and user experience
             </p>
@@ -99,10 +99,10 @@ const About = () => {
               <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Government Certified</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Official UAE government standards with regular updates and compliance verification
-              </p>
+                             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Government Certified</h3>
+               <p className="text-gray-600 dark:text-gray-300">
+                 Official Indian government standards with regular updates and compliance verification
+               </p>
             </div>
           </div>
         </div>
@@ -180,7 +180,7 @@ const About = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Our Commitment</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              We're dedicated to making job classification accessible, accurate, and efficient for all UAE residents and organizations
+              We're dedicated to making job classification accessible, accurate, and efficient for all Indian residents and organizations
             </p>
           </div>
 
@@ -190,7 +190,7 @@ const About = () => {
                 Trusted by Government and Industry
               </h3>
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-                Our platform is officially recognized and used by government agencies, HR departments, and job seekers across the UAE. We maintain the highest standards of accuracy and compliance with national classification systems.
+                Our platform is officially recognized and used by government agencies, HR departments, and job seekers across India. We maintain the highest standards of accuracy and compliance with national classification systems.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-sm">
@@ -206,6 +206,90 @@ const About = () => {
                   <p className="text-gray-600 dark:text-gray-300 text-sm">Accurate career guidance and opportunity discovery</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Get answers to common questions about the National Classification of Occupations
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <details className="group">
+                <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">What is the National Classification of Occupation (NCO)?</h3>
+                  <span className="text-blue-600 dark:text-blue-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="px-6 pb-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    The National Classification of Occupation (NCO) is India's official system for classifying and coding occupations. It provides a standardized framework for categorizing jobs across different sectors and industries in India, ensuring consistency in job classification for government policies, HR practices, and career guidance.
+                  </p>
+                </div>
+              </details>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <details className="group">
+                <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">How accurate is the AI-powered NCO code matching?</h3>
+                  <span className="text-blue-600 dark:text-blue-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="px-6 pb-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our AI-powered semantic search achieves 95% accuracy in matching job descriptions with appropriate NCO codes. The system uses advanced natural language processing to understand context, industry-specific terminology, and job requirements to provide precise matches.
+                  </p>
+                </div>
+              </details>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <details className="group">
+                <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Which languages are supported for NCO code search?</h3>
+                  <span className="text-blue-600 dark:text-blue-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="px-6 pb-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    We support 13+ Indian languages including Hindi, Bengali, Tamil, Telugu, Malayalam, Kannada, Gujarati, Punjabi, Odia, Assamese, Marathi, and Sanskrit. This makes the platform accessible to users across India, regardless of their preferred language.
+                  </p>
+                </div>
+              </details>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <details className="group">
+                <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">How many NCO codes are available in the system?</h3>
+                  <span className="text-blue-600 dark:text-blue-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="px-6 pb-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our system contains over 3,600 NCO codes covering 52 industry sectors, providing comprehensive coverage of occupations across the Indian job market. This includes both traditional and emerging job roles in various sectors.
+                  </p>
+                </div>
+              </details>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <details className="group">
+                <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Is the NCO system integrated with National Career Service (NCS)?</h3>
+                  <span className="text-blue-600 dark:text-blue-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="px-6 pb-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Yes, our platform is fully integrated with the National Career Service (NCS) portal, allowing users to find government jobs and career opportunities based on their NCO codes. This integration provides seamless access to job listings and career guidance services.
+                  </p>
+                </div>
+              </details>
             </div>
           </div>
         </div>

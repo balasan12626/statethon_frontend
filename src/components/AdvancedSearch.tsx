@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, Mic, Filter, X, Clock, TrendingUp, Sparkles, Zap } from 'lucide-react';
+import { Search, Mic, Filter, Clock, TrendingUp, Sparkles, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { debounce } from '../utils/debounce';
@@ -19,7 +19,7 @@ interface AdvancedSearchProps {
   isLoading: boolean;
   isListening: boolean;
   onVoiceInput: () => void;
-  backendStatus: 'checking' | 'connected' | 'disconnected';
+  // backendStatus removed
 }
 
 const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
@@ -28,8 +28,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   onSearch,
   isLoading,
   isListening,
-  onVoiceInput,
-  backendStatus
+  onVoiceInput
 }) => {
   const { t } = useTranslation();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -220,7 +219,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               {/* Search Button */}
               <motion.button
                 onClick={handleSearch}
-                disabled={!value.trim() || isLoading || backendStatus === 'disconnected'}
+                disabled={!value.trim() || isLoading}
                 className="flex items-center px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-soft"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -229,11 +228,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   <>
                     <div className="w-5 h-5 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     Analyzing...
-                  </>
-                ) : backendStatus === 'disconnected' ? (
-                  <>
-                    <X className="w-5 h-5 mr-2" />
-                    Offline
                   </>
                 ) : (
                   <>
@@ -319,14 +313,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                       onChange={(e) => setFilters({...filters, location: e.target.value})}
                       className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     >
-                      <option value="">All Emirates</option>
-                      <option value="dubai">Dubai</option>
-                      <option value="abudhabi">Abu Dhabi</option>
-                      <option value="sharjah">Sharjah</option>
-                      <option value="ajman">Ajman</option>
-                      <option value="rak">Ras Al Khaimah</option>
-                      <option value="fujairah">Fujairah</option>
-                      <option value="uaq">Umm Al Quwain</option>
+                      <option value="">All Cities</option>
+                      <option value="mumbai">Mumbai</option>
+                      <option value="delhi">Delhi</option>
+                      <option value="bangalore">Bangalore</option>
+                      <option value="chennai">Chennai</option>
+                      <option value="kolkata">Kolkata</option>
+                      <option value="hyderabad">Hyderabad</option>
+                      <option value="pune">Pune</option>
                     </select>
                   </div>
                 </div>

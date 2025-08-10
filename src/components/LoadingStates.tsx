@@ -10,65 +10,99 @@ const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => (
   <div className={`animate-pulse bg-neutral-200 dark:bg-neutral-700 rounded ${className}`}></div>
 );
 
-export const SearchLoadingState: React.FC = () => (
-  <motion.div 
-    className="bg-white dark:bg-neutral-800 rounded-3xl shadow-hard p-8 border border-neutral-200 dark:border-neutral-700"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    <div className="text-center">
-      <div className="relative inline-block mb-6">
-        <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-glow">
-          <Brain className="w-8 h-8 text-white animate-pulse" />
+export const SearchLoadingState: React.FC = () => {
+  const [progress, setProgress] = React.useState(0);
+  
+  React.useEffect(() => {
+    // Start progress animation
+    const duration = 20000; // 20 seconds
+    const interval = 100; // Update every 100ms
+    const steps = duration / interval;
+    const increment = 100 / steps;
+    
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        const next = Math.min(prev + increment, 100);
+        return next;
+      });
+    }, interval);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  const steps = [
+    { icon: Target, text: "Analyzing job requirements", threshold: 33 },
+    { icon: Brain, text: "Processing semantic similarity", threshold: 66 },
+    { icon: Zap, text: "Matching with NCO database", threshold: 100 }
+  ];
+
+  return (
+    <motion.div 
+      className="bg-white dark:bg-neutral-800 rounded-3xl shadow-hard p-8 border border-neutral-200 dark:border-neutral-700"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="text-center">
+        <div className="relative inline-block mb-6">
+          <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-glow">
+            <Brain className="w-8 h-8 text-white animate-pulse" />
+          </div>
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent-500 rounded-full flex items-center justify-center animate-bounce">
+            <Sparkles className="w-3 h-3 text-white" />
+          </div>
         </div>
-        <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent-500 rounded-full flex items-center justify-center animate-bounce">
-          <Sparkles className="w-3 h-3 text-white" />
-        </div>
-      </div>
-      
-      <h3 className="text-xl font-semibold text-neutral-800 dark:text-white mb-2">
-        AI is Analyzing Your Job Description
-      </h3>
-      <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-        Our advanced AI is processing semantic meaning and matching against UAE NCO codes...
-      </p>
-      
-      <div className="space-y-3 mb-6">
-        {[
-          { icon: Target, text: "Analyzing job requirements", delay: 0 },
-          { icon: Brain, text: "Processing semantic similarity", delay: 0.5 },
-          { icon: Zap, text: "Matching with NCO database", delay: 1 },
-        ].map(({ icon: Icon, text, delay }, index) => (
-          <motion.div
-            key={index}
-            className="flex items-center justify-center gap-3 text-neutral-600 dark:text-neutral-400"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay }}
-          >
-            <Icon className="w-4 h-4 text-primary-500" />
-            <span className="text-sm">{text}</span>
+        
+        <h3 className="text-xl font-semibold text-neutral-800 dark:text-white mb-2">
+          AI is Analyzing Your Job Description
+        </h3>
+        
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+          Please wait while our advanced AI processes your job description...
+        </p>
+        
+        <div className="space-y-3 mb-6">
+          {steps.map(({ icon: Icon, text, threshold }, index) => (
             <motion.div
-              className="w-2 h-2 bg-primary-500 rounded-full"
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 1, repeat: Infinity, delay }}
-            />
-          </motion.div>
-        ))}
+              key={index}
+              className="flex items-center justify-center gap-3 text-neutral-600 dark:text-neutral-400"
+              initial={{ opacity: 0.5 }}
+              animate={{ 
+                opacity: progress >= threshold ? 1 : 0.5,
+                x: progress >= threshold ? 0 : -20
+              }}
+              transition={{ duration: 0.5 }}
+            >
+              <Icon className={`w-4 h-4 ${progress >= threshold ? 'text-primary-500' : 'text-neutral-400'}`} />
+              <span className="text-sm">{text}</span>
+              {progress >= threshold && (
+                <motion.div
+                  className="w-2 h-2 bg-primary-500 rounded-full"
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+        
+        <div className="mt-4">
+          <ProgressBar 
+            progress={Math.round(progress)} 
+            label="Analysis Progress" 
+            color="from-success-500 to-accent-500" 
+          />
+        </div>
+
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-4">
+          Estimated time remaining: {Math.max(0, Math.ceil(20 * (100 - progress) / 100))} seconds
+        </p>
       </div>
-      
-      <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2 overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 3, ease: "easeInOut" }}
-        />
-      </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 export const ResultsSkeleton: React.FC = () => (
   <motion.div 

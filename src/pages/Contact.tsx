@@ -33,7 +33,7 @@ const Contact = () => {
               Contact Us
             </h1>
             <p className="text-xl max-w-3xl mx-auto">
-              Get in touch with our team for support, feedback, or inquiries about the UAE NCO classification system
+              Get in touch with our team for support, feedback, or inquiries about the Indian NCO classification system
             </p>
           </div>
         </div>
@@ -49,8 +49,8 @@ const Contact = () => {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Email Support</h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">Get help via email</p>
-              <a href="mailto:support@uaenco.gov.ae" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                support@uaenco.gov.ae
+              <a href="mailto:support@nco.gov.in" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                support@nco.gov.in
               </a>
             </div>
 
@@ -60,8 +60,8 @@ const Contact = () => {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Phone Support</h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">Call us for immediate assistance</p>
-              <a href="tel:+971-4-123-4567" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">
-                +971-4-123-4567
+              <a href="tel:+91-11-1234-5678" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">
+                +91-11-1234-5678
               </a>
             </div>
 
@@ -72,7 +72,7 @@ const Contact = () => {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Office Location</h3>
               <p className="text-gray-600 dark:text-gray-300 mb-3">Visit our headquarters</p>
               <p className="text-purple-600 dark:text-purple-400 font-medium">
-                Dubai, UAE
+                New Delhi, India
               </p>
             </div>
           </div>
@@ -268,7 +268,7 @@ const Contact = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">We're Here to Help</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Our dedicated support team is committed to providing you with the best possible experience using the UAE NCO classification system.
+              Our dedicated support team is committed to providing you with the best possible experience using the Indian NCO classification system.
             </p>
           </div>
 

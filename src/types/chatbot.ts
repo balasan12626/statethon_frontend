@@ -7,14 +7,18 @@ export interface ChatMessage {
 
 export interface ChatbotRequest {
   message: string;
-  model: string;
+  conversation_id?: string | null;
 }
 
 export interface ChatbotResponse {
-  success: boolean;
+  // Many backends simply return a `response` field
   response: string;
-  model: string;
-  timestamp: string;
+  conversation_id?: string | null;
+  nco_matches?: unknown[];
+  // Optional fields for compatibility with other backends
+  success?: boolean;
+  model?: string;
+  timestamp?: string;
   usage?: {
     model: string;
     timestamp: string;

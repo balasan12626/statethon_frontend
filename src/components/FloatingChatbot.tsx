@@ -14,6 +14,7 @@ const FloatingChatbot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>(getInitialMessages());
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  // Removed unused state since we're using static null for conversation_id
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -38,51 +39,28 @@ const FloatingChatbot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Try proxy first, then fallback to direct connection
-      let response;
-      try {
-        response = await fetch('https://statethon-backend.onrender.com/api/langchain/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: userMessage.text,
-            model: 'groq',
-            systemPrompt: 'You are a helpful NCO career assistant. Provide accurate and helpful information about job classifications, career guidance, and NCO codes.'
-          }),
-        });
-        
-        // If proxy returns 404 or other error, try direct connection
-        if (!response.ok) {
-          throw new Error('Proxy failed');
-        }
-      } catch (proxyError) {
-        response = await fetch('https://statethon-backend.onrender.com/api/langchain/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: userMessage.text,
-            model: 'groq',
-            systemPrompt: 'You are a helpful NCO career assistant. Provide accurate and helpful information about job classifications, career guidance, and NCO codes.'
-          }),
-        });
-      }
+      // Direct Render backend URL for chat
+      const response = await fetch('https://statethon-fastapi-backend.onrender.com/chat/general', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          message: userMessage.text,
+          conversation_id: null  // static null as shown in Postman
+        }),
+      });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
+      if (!response.ok) throw new Error(`Request failed with ${response.status}`);
 
       const data: ChatbotResponse = await response.json();
+      // Response handling
+      const replyText = data.response ?? '';
+      if (!replyText) throw new Error('Empty response');
 
-      if (data.success) {
-        const botMessage = createBotMessage(data.response);
-        setMessages(prev => [...prev, botMessage]);
-      } else {
-        throw new Error('API returned error');
-      }
+      const botMessage = createBotMessage(replyText);
+      setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = createErrorMessage();

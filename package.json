@@ -1,5 +1,5 @@
 {
-  "name": "uae-nco-website",
+  "name": "indian-nco-website",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,16 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.6.7",
     "framer-motion": "^10.18.0",
     "i18next": "^23.16.8",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-i18next": "^13.5.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^6.20.1",
-    "axios": "^1.6.7"
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
@@ -27,12 +28,13 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.1.1",
-    "autoprefixer": "^10.4.16",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.0.50",
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5.2.2",
     "vite": "^4.5.0"
   }

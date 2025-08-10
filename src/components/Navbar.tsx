@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ThemeControls from './ThemeControls';
-import LanguageSelector from './LanguageSelector';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,11 +19,13 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Globe className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-600 to-green-600 rounded-lg flex items-center justify-center">
+                <div className="relative">
+                  <img src="/nco-logo.png" alt="NCO Logo" className="w-6 h-6" />
+                </div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('nav.logo')}</h1>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{t('nav.logo')}</h1>
                 <p className="text-xs text-gray-600 dark:text-gray-400">{t('nav.subtitle')}</p>
               </div>
             </Link>
@@ -66,14 +68,14 @@ const Navbar = () => {
 
             {/* Controls */}
             <div className="flex items-center space-x-2 ml-4">
-              <LanguageSelector />
+              <LanguageSwitcher />
               <ThemeControls />
             </div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            <LanguageSelector />
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"

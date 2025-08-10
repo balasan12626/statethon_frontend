@@ -6,10 +6,23 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      // Local backend (Node) on port 8001
       '/api': {
-        target: 'https://statethon-backend.onrender.com',
+        target: 'http://localhost:8001',
         changeOrigin: true,
-        secure: true,
+        secure: false,
+        timeout: 120000,
+        proxyTimeout: 120000,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      // Optional fallback backend on port 8000
+      '/api8000': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        timeout: 120000,
+        proxyTimeout: 120000,
+        rewrite: (path) => path.replace(/^\/api8000/, '')
       }
     }
   }

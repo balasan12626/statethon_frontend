@@ -8,10 +8,10 @@ import { useLocation } from 'react-router-dom';
 import AdvancedSearch from '../components/AdvancedSearch';
 import EnhancedResultCard from '../components/EnhancedResultCard';
 import { SearchLoadingState, ChatLoadingState, ErrorState } from '../components/LoadingStates';
-import { AccessibilityPanel, AccessibilityButton, SkipToContent, useKeyboardShortcuts } from '../components/AccessibilityEnhancements';
+// Removed accessibility imports
 import { LazyOnView } from '../components/LazyComponents';
 import { useIsMobile, ScrollToTopButton, MobileShareMenu } from '../components/MobileOptimizations';
-import { cachedSearchFetch } from '../utils/cache';
+// import { cachedSearchFetch } from '../utils/cache';
 
 // Lazy load heavy components
 const EnhancedStatsSection = lazy(() => import('../components/EnhancedStatsSection'));
@@ -72,16 +72,15 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [shareUrl, setShareUrl] = useState<string>('');
-  const [backendStatus, setBackendStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  // Removed backendStatus state
   const [isChatLoading, setIsChatLoading] = useState(false);
 
   
   // Enhanced UI state
-  const [showAccessibility, setShowAccessibility] = useState(false);
+  // Accessibility state removed
   const [showMobileShare, setShowMobileShare] = useState(false);
   
-  // Initialize keyboard shortcuts
-  useKeyboardShortcuts();
+  // Keyboard shortcuts removed
 
   const examples = [
     { 
@@ -113,6 +112,108 @@ const Home = () => {
 
 
 
+  // New response types for local multi-agent backend
+  interface MultiAgentMatch {
+    nco_code?: string;
+    title?: string;
+    description?: string;
+    score: number; // 0..1
+    id?: string | number;
+  }
+
+  interface MultiAgentResponse {
+    explanation?: string; // markdown-like text
+    matches?: MultiAgentMatch[];
+  }
+
+  // Transform backend response → UI SearchResponse
+  const transformMultiAgentToSearchResponse = (
+    inputText: string,
+    api: MultiAgentResponse
+  ): SearchResponse | null => {
+    if (!api || !api.matches || api.matches.length === 0) return null;
+    // Pick the best scoring match
+    const top = [...api.matches].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
+
+    const topMatch: NCOMatch = {
+      title: top.title || 'Unknown',
+      score: typeof top.score === 'number' ? top.score : 0,
+      metadata: {
+        nco_code: top.nco_code || String(top.id || ''),
+        title: top.title || 'Unknown',
+        description: top.description || 'No description available'
+      }
+    };
+
+    return {
+      success: true,
+      data: {
+        success: true,
+        input: inputText,
+        topMatch
+      }
+    };
+  };
+
+  // Prefer whichever backend worked last during this session
+  const preferredEndpointRef = React.useRef<string | null>(null);
+  const BACKEND_ENDPOINTS = React.useMemo(() => {
+    const configuredBase = (import.meta as any).env?.VITE_SEARCH_API_BASE as string | undefined;
+    const endpoints: string[] = [];
+    if (configuredBase) {
+      const base = configuredBase.replace(/\/$/, '');
+      endpoints.push(`${base}/search_nco_multiagent`);
+    }
+    // Direct cloud URL first, then proxies
+    endpoints.push(
+      'https://statethon-fastapi-backend.onrender.com/search_nco_multiagent', // direct cloud
+      '/api/chat/general',       // proxied to localhost:8001 via Vite
+      '/api8000/chat/general'    // proxied to localhost:8000 via Vite (fallback)
+    );
+    return endpoints;
+  }, []);
+
+  const requestMultiAgent = async (payload: { query: string; top_k: number }): Promise<MultiAgentResponse> => {
+    const endpoints = preferredEndpointRef.current
+      ? [preferredEndpointRef.current, ...BACKEND_ENDPOINTS.filter(u => u !== preferredEndpointRef.current)]
+      : BACKEND_ENDPOINTS;
+
+    let lastError: unknown = null;
+    for (const url of endpoints) {
+      try {
+        console.log('Trying endpoint:', url, 'with payload:', payload);
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': window.location.origin
+          },
+          mode: 'cors',
+          credentials: 'omit',
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          // Try to log server error body for easier debugging
+          let detail = '';
+          try { detail = await res.text(); } catch {}
+          console.error('Backend error:', detail);
+          throw new Error(`HTTP ${res.status}${detail ? `: ${detail.slice(0, 200)}` : ''}`);
+        }
+        const data = (await res.json()) as MultiAgentResponse;
+        preferredEndpointRef.current = url; // remember working endpoint
+        // setBackendStatus removed
+        return data;
+      } catch (e) {
+        console.error('Failed to connect to', url, e);
+        lastError = e;
+        // try next endpoint
+      }
+    }
+    // setBackendStatus removed
+    throw lastError ?? new Error('All backend endpoints failed');
+  };
+
   const getNCOCode = (metadata: any) => {
     return metadata?.nco_code || 
            metadata?.ncoCode ||
@@ -133,6 +234,30 @@ const Home = () => {
            metadata?.summary ||
            'No description available';
   };
+
+  // Format backend explanation text: remove markdown symbols (e.g., **, ##) and tidy bullets
+  const formatExplanation = React.useCallback((text: string): string => {
+    if (!text) return '';
+    let out = text.replace(/\r\n/g, '\n');
+    // remove code fences and inline backticks
+    out = out.replace(/```[\s\S]*?```/g, '');
+    out = out.replace(/`([^`]+)`/g, '$1');
+    // remove bold/italic markers
+    out = out.replace(/\*\*([^*]+)\*\*/g, '$1');
+    out = out.replace(/\*([^*]+)\*/g, '$1');
+    out = out.replace(/_([^_]+)_/g, '$1');
+    // turn markdown headings into plain lines
+    out = out.replace(/^#{1,6}\s*/gm, '');
+    // normalize bullets
+    out = out.replace(/^\s*[-•]\s+/gm, '• ');
+    out = out.replace(/\n{3,}/g, '\n\n');
+    // trim excessive spaces on each line
+    out = out
+      .split('\n')
+      .map(line => line.trimEnd())
+      .join('\n');
+    return out.trim();
+  }, []);
 
   // Check for shared results on component mount
   React.useEffect(() => {
@@ -174,11 +299,14 @@ const Home = () => {
         setBackendStatus(isConnected ? 'connected' : 'disconnected');
       } catch (err) {
         console.error('Backend check failed:', err);
-        setBackendStatus('disconnected');
+        // setBackendStatus removed
       }
     };
     
     checkBackend();
+    // Re-check periodically
+    const intervalId = window.setInterval(checkBackend, 30000);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const handleVoiceInput = () => {
@@ -192,40 +320,16 @@ const Home = () => {
 
   const checkBackendConnection = async () => {
     try {
-      // Try proxy first
-      const proxyResponse = await fetch('/api/search', {
-        method: 'OPTIONS',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      if (proxyResponse.ok) return true;
-      
-      // Fallback to direct backend call
-      const directResponse = await fetch('https://statethon-backend.onrender.com/api/search', {
-        method: 'OPTIONS',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      return directResponse.ok;
+      // Use a stable, known-good query for connectivity check
+      const resp = await requestMultiAgent({ query: 'Manager, Agricultural Farm', top_k: 1 });
+      return !!resp;
     } catch (err) {
       console.error('Backend connectivity check failed:', err);
       return false;
     }
   };
 
-  const makeApiCall = async (url: string, data: any) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-    return response;
-  };
+  // Removed generic makeApiCall in favor of direct cachedSearchFetch usage
 
   const handleSearch = async () => {
     if (!jobDescription.trim()) return;
@@ -234,25 +338,18 @@ const Home = () => {
     setError(null);
     setShowResults(false);
     setChatResponse(null);
+    setIsChatLoading(true);
     
     try {
-      console.log('Sending request to backend...');
-      
-      // Use cached search with improved error handling
-      let data: SearchResponse;
-      try {
-        data = await cachedSearchFetch<SearchResponse>('/api/search', { text: jobDescription.trim() });
-        console.log('Using proxy connection');
-      } catch (proxyError) {
-        console.log('Proxy failed, trying direct connection...');
-        data = await cachedSearchFetch<SearchResponse>('https://statethon-backend.onrender.com/api/search', { text: jobDescription.trim() });
-        console.log('Using direct connection');
-      }
-      
-      console.log('API Response:', data); // Debug log
-      
-      // Check if the response has the expected structure
-      if (data && data.success && data.data && data.data.success && data.data.topMatch) {
+      console.log('Sending request to local multi-agent backend...');
+
+      // Always send top_k = 3 as requested
+      const multiAgent = await requestMultiAgent({ query: jobDescription.trim(), top_k: 3 });
+
+      // Transform into UI structure
+      const data = transformMultiAgentToSearchResponse(jobDescription.trim(), multiAgent);
+
+      if (data && data.success && data.data && data.data.topMatch) {
         // Check if we have meaningful data - look for title in multiple places
         const actualTitle = data.data.topMatch.metadata?.title || 
                            data.data.topMatch.metadata?.occupationTitle ||
@@ -276,21 +373,28 @@ const Home = () => {
           console.log('Debug - Setting search result successfully');
           setSearchResult(data);
           setShowResults(true);
+          // setBackendStatus removed
           // Generate share URL
           generateShareUrl(data);
-          
-          // Now call the langchain chat API to get elaborated response
-          await getElaboratedResponse(data);
+
+          // Use backend-provided explanation as AI analysis (if present)
+          if (multiAgent && multiAgent.explanation) {
+            setChatResponse({
+              success: true,
+              response: multiAgent.explanation,
+              model: 'multiagent',
+              timestamp: new Date().toISOString(),
+              usage: { model: 'multiagent', timestamp: new Date().toISOString() }
+            });
+          } else {
+            setChatResponse(null);
+          }
         } else {
           console.log('Debug - No suitable match found. actualTitle:', actualTitle, 'ncoCode:', ncoCode);
           setError('No suitable NCO matches found for your job description. Please try a different description.');
         }
-      } else if (data && data.success && data.data && !data.data.success) {
-        // Backend returned success: false
-        console.log('Debug - Backend returned success: false');
-        setError('No matches found. Please try a different job description.');
       } else {
-        console.error('Invalid response structure:', data);
+        console.error('Invalid response structure from multi-agent backend:', multiAgent);
         setError('Invalid response from server. Please try again.');
       }
     } catch (err) {
@@ -299,7 +403,7 @@ const Home = () => {
       // More specific error handling
       if (err instanceof TypeError) {
         if (err.message.includes('fetch')) {
-          setError('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:3000');
+          setError('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:8001 or http://localhost:8000');
         } else if (err.message.includes('CORS')) {
           setError('CORS error: The server is not allowing requests from this origin. Please check backend CORS configuration.');
         } else {
@@ -307,7 +411,7 @@ const Home = () => {
         }
       } else if (err instanceof Error) {
         if (err.message.includes('Failed to fetch')) {
-          setError('Connection failed: Please ensure the backend server is running at http://localhost:3000');
+          setError('Connection failed: Please ensure the backend server is running at http://localhost:8001 or http://localhost:8000');
         } else {
           setError(`Error: ${err.message}`);
         }
@@ -321,70 +425,11 @@ const Home = () => {
       setSearchResult(null);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getElaboratedResponse = async (searchData: SearchResponse) => {
-    setIsChatLoading(true);
-    try {
-      const topMatch = searchData.data.topMatch;
-      const ncoCode = topMatch.metadata?.nco_code || 'Unknown';
-      const jobTitle = topMatch.metadata?.title || topMatch.title || 'Unknown';
-      const score = topMatch.score;
-      const description = topMatch.metadata?.description || 'No description available';
-      
-      // Create a detailed prompt for the AI to elaborate on the job classification
-      const prompt = `Please provide a detailed and comprehensive analysis of this NCO job classification:
-
-Job Description: "${searchData.data.input}"
-NCO Code: ${ncoCode}
-Job Title: ${jobTitle}
-Match Score: ${(score * 100).toFixed(3)}%
-Description: ${description}
-
-Please provide:
-1. A detailed explanation of what this job entails
-2. Required skills and qualifications
-3. Typical responsibilities and duties
-4. Career progression opportunities
-5. Industry sectors where this role is common
-6. Salary expectations and growth potential
-7. Training and certification requirements
-8. Related job titles and similar NCO codes
-9. Tips for job seekers interested in this role
-10. Current market demand and future outlook
-
-Make the response comprehensive, professional, and helpful for job seekers.`;
-
-      let response;
-      try {
-        response = await makeApiCall('/api/langchain/chat', {
-          message: prompt,
-          model: 'groq',
-          systemPrompt: 'You are a specialized career counselor and job classification expert. Provide detailed, accurate, and helpful information about job roles, skills, qualifications, and career guidance. Be comprehensive and professional in your responses.'
-        });
-      } catch (proxyError) {
-        response = await makeApiCall('https://statethon-backend.onrender.com/api/langchain/chat', {
-          message: prompt,
-          model: 'groq',
-          systemPrompt: 'You are a specialized career counselor and job classification expert. Provide detailed, accurate, and helpful information about job roles, skills, qualifications, and career guidance. Be comprehensive and professional in your responses.'
-        });
-      }
-
-      if (!response.ok) {
-        throw new Error(`Chat API error: ${response.status}`);
-      }
-
-      const chatData: ChatResponse = await response.json();
-      setChatResponse(chatData);
-      
-    } catch (err) {
-      console.error('Chat API error:', err);
-      // Don't show error for chat failure, just log it
-    } finally {
       setIsChatLoading(false);
     }
   };
+
+  // Removed old chat elaboration function; we now use the backend's explanation directly
 
   const generateShareUrl = (result: SearchResponse) => {
     const baseUrl = window.location.origin + window.location.pathname;
@@ -412,7 +457,7 @@ Make the response comprehensive, professional, and helpful for job seekers.`;
     if (!searchResult) return;
     
     // Create a formatted text file with the results
-    const content = `UAE NCO Job Classification Result
+    const content = `Indian NCO Job Classification Result
 ===============================================
 
 Job Description: ${searchResult.data.input}
@@ -452,7 +497,7 @@ Generated on: ${new Date().toLocaleString()}
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'UAE NCO Job Classification Result',
+          title: 'Indian NCO Job Classification Result',
           text: `Check out my NCO match: ${getJobTitle(searchResult!.data.topMatch)} (${getNCOCode(searchResult!.data.topMatch.metadata)})`,
           url: shareUrl
         });
@@ -467,7 +512,7 @@ Generated on: ${new Date().toLocaleString()}
 
   return (
     <>
-      <SkipToContent />
+      {/* Skip to content removed */}
       <div 
         id="main-content"
         className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 transition-all duration-300"
@@ -494,7 +539,7 @@ Generated on: ${new Date().toLocaleString()}
             />
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="relative w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-16">
             <motion.div 
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
@@ -502,7 +547,7 @@ Generated on: ${new Date().toLocaleString()}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h1 
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight"
+                className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4 leading-tight"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -529,7 +574,7 @@ Generated on: ${new Date().toLocaleString()}
                 ))}
               </motion.h1>
               <motion.p 
-                className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-300 mb-12 max-w-4xl mx-auto leading-relaxed"
+                className="text-lg md:text-xl text-neutral-600 dark:text-neutral-300 mb-8 max-w-3xl mx-auto leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -559,7 +604,7 @@ Generated on: ${new Date().toLocaleString()}
                 </motion.div>
                 {t('home.examples')}
               </motion.h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {examples.map((example, index) => (
                   <motion.div
                     key={index}
@@ -610,7 +655,7 @@ Generated on: ${new Date().toLocaleString()}
                 isLoading={isLoading}
                 isListening={isListening}
                 onVoiceInput={handleVoiceInput}
-                backendStatus={backendStatus}
+
               />
             </motion.div>
 
@@ -649,7 +694,7 @@ Generated on: ${new Date().toLocaleString()}
             <AnimatePresence>
               {showResults && searchResult && searchResult.data && searchResult.data.topMatch && (
                 <motion.div 
-                  className="max-w-6xl mx-auto mt-12"
+                  className="max-w-6xl mx-auto mt-8 sm:mt-12"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -30 }}
@@ -754,7 +799,7 @@ Generated on: ${new Date().toLocaleString()}
                     <div className="prose prose-blue dark:prose-invert max-w-none">
                       <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
                         <div className="whitespace-pre-wrap text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                          {chatResponse.response}
+                          {formatExplanation(chatResponse.response)}
                         </div>
                       </div>
                     </div>
@@ -789,7 +834,7 @@ Generated on: ${new Date().toLocaleString()}
             isOpen={showMobileShare}
             onClose={() => setShowMobileShare(false)}
             shareData={{
-              title: 'UAE NCO Job Classification Result',
+              title: 'Indian NCO Job Classification Result',
               text: searchResult && searchResult.data && searchResult.data.topMatch ? 
                 `Check out my NCO match: ${getJobTitle(searchResult.data.topMatch)} (${getNCOCode(searchResult.data.topMatch.metadata)})` : 
                 'NCO Classification Result',
@@ -799,12 +844,7 @@ Generated on: ${new Date().toLocaleString()}
         </>
       )}
 
-      {/* Enhanced Accessibility */}
-      <AccessibilityButton onClick={() => setShowAccessibility(true)} />
-      <AccessibilityPanel
-        isOpen={showAccessibility}
-        onClose={() => setShowAccessibility(false)}
-      />
+      {/* Accessibility panel removed */}
     </>
   );
 };

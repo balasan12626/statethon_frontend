@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-# UAE NCO Job Classification Frontend
+# Indian NCO Job Classification Frontend
 
-This is the frontend application for the UAE NCO (National Classification of Occupations) Job Classification system.
+This is the frontend application for the Indian NCO (National Classification of Occupations) Job Classification system.
 
 ## Features
 
