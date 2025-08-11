@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide any Google Translate widgets that might appear */
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+.goog-te-ftab,
+.goog-te-balloon-frame,
+#google_translate_element,
+.goog-te-gadget {
+  display: none !important;
+}
+
+/* Reset body positioning from Google Translate */
+body {
+  top: 0 !important;
+  position: relative !important;
+}
+
 @layer base {
   :root {
     --primary-color: #3b82f6; /* blue-500 */
@@ -102,15 +118,21 @@
 
   /* Custom animations */
   .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
 
   @keyframes float {
     0%, 100% {
-      transform: translateY(0px);
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-8px) rotate(2deg);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateY(-12px) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-8px) rotate(-2deg);
     }
   }
 
@@ -127,45 +149,45 @@
   }
 
   /* Circular Progress Bar Animations */
-  .progress-circle-glow {
-    filter: drop-shadow(0 0 16px rgba(29, 78, 216, 0.6));
-    animation: progressGlow 2s ease-in-out infinite alternate;
+  .progress-circle-strong {
+    filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.6));
+    animation: progressGlowGreen 2s ease-in-out infinite alternate;
   }
 
-  .progress-circle-success {
-    filter: drop-shadow(0 0 16px rgba(4, 120, 87, 0.6));
-    animation: progressGlowSuccess 2s ease-in-out infinite alternate;
+  .progress-circle-excellent {
+    filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6));
+    animation: progressGlowEmerald 2s ease-in-out infinite alternate;
   }
 
-  .progress-circle-warning {
-    filter: drop-shadow(0 0 16px rgba(180, 83, 9, 0.6));
-    animation: progressGlowWarning 2s ease-in-out infinite alternate;
+  .progress-circle-good {
+    filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
+    animation: progressGlowAmber 2s ease-in-out infinite alternate;
   }
 
-  @keyframes progressGlow {
+  @keyframes progressGlowGreen {
     0% {
-      filter: drop-shadow(0 0 12px rgba(29, 78, 216, 0.5));
+      filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.5));
     }
     100% {
-      filter: drop-shadow(0 0 20px rgba(29, 78, 216, 0.8));
+      filter: drop-shadow(0 0 25px rgba(34, 197, 94, 0.8));
     }
   }
 
-  @keyframes progressGlowSuccess {
+  @keyframes progressGlowEmerald {
     0% {
-      filter: drop-shadow(0 0 12px rgba(4, 120, 87, 0.5));
+      filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.5));
     }
     100% {
-      filter: drop-shadow(0 0 20px rgba(4, 120, 87, 0.8));
+      filter: drop-shadow(0 0 25px rgba(16, 185, 129, 0.8));
     }
   }
 
-  @keyframes progressGlowWarning {
+  @keyframes progressGlowAmber {
     0% {
-      filter: drop-shadow(0 0 12px rgba(180, 83, 9, 0.5));
+      filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5));
     }
     100% {
-      filter: drop-shadow(0 0 20px rgba(180, 83, 9, 0.8));
+      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.8));
     }
   }
 
@@ -214,19 +236,19 @@
     }
   }
 
-  /* Background gradient pulse */
+  /* Enhanced background pulse for progress circles */
   .progress-bg-pulse {
-    animation: progressBgPulse 3s ease-in-out infinite;
+    animation: progressBgPulseEnhanced 4s ease-in-out infinite;
   }
 
-  @keyframes progressBgPulse {
+  @keyframes progressBgPulseEnhanced {
     0%, 100% {
-      opacity: 0.1;
+      opacity: 0.15;
       transform: scale(1);
     }
     50% {
-      opacity: 0.2;
-      transform: scale(1.05);
+      opacity: 0.25;
+      transform: scale(1.08);
     }
   }
 

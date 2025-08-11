@@ -11,7 +11,7 @@ import {
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(getInitialMessages());
+  const [messages, setMessages] = useState<ChatMessage[]>(() => getInitialMessages());
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // Removed unused state since we're using static null for conversation_id
@@ -23,10 +23,12 @@ const FloatingChatbot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when chat opens
+  // Focus input when chat opens and reset messages
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
+      // Force refresh messages to ensure latest version
+      setMessages(getInitialMessages());
     }
   }, [isOpen]);
 
@@ -161,7 +163,7 @@ const FloatingChatbot: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about NCO Code 20215..."
+                placeholder="Ask about NCO Code 2015..."
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                 disabled={isLoading}
               />

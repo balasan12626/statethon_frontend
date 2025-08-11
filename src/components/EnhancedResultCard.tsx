@@ -11,7 +11,6 @@ import {
   ThumbsUp,
   ThumbsDown
 } from 'lucide-react';
-import CountUp from 'react-countup';
 
 interface NCOMatch {
   title: string;
@@ -48,13 +47,41 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [progressAnimation, setProgressAnimation] = useState(0);
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+  const [displayValue, setDisplayValue] = useState(0);
 
   // Animate progress bar on mount
   useEffect(() => {
+    let animationTimer: NodeJS.Timeout;
+    
     const timer = setTimeout(() => {
-      setProgressAnimation(formatMatchScore(match.score));
+      const targetValue = formatMatchScore(match.score);
+      setProgressAnimation(targetValue);
+      
+      // Animate the display value
+      const duration = 2000; // 2 seconds
+      const steps = 60; // 60 steps for smooth animation
+      const increment = targetValue / steps;
+      const stepDuration = duration / steps;
+      
+      let currentStep = 0;
+      animationTimer = setInterval(() => {
+        currentStep++;
+        const newValue = Math.min(Math.round(increment * currentStep), targetValue);
+        setDisplayValue(newValue);
+        
+        if (currentStep >= steps) {
+          clearInterval(animationTimer);
+          setDisplayValue(targetValue);
+        }
+      }, stepDuration);
     }, 500);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      clearTimeout(timer);
+      if (animationTimer) {
+        clearInterval(animationTimer);
+      }
+    };
   }, [match.score]);
 
   // Handle copy with feedback
@@ -85,22 +112,22 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
   const getScoreColor = (score: number) => {
     const percentage = formatMatchScore(score);
     if (percentage >= 85) return 'from-emerald-500 to-green-500';
-    if (percentage >= 80) return 'from-blue-500 to-cyan-500';
+    if (percentage >= 80) return 'from-green-500 to-emerald-500';
     return 'from-orange-500 to-yellow-500'; // For 75% case
   };
 
   const getScoreStrokeColor = (score: number) => {
     const percentage = formatMatchScore(score);
-    if (percentage >= 85) return '#047857'; // emerald-700 - even darker for better visibility
-    if (percentage >= 80) return '#1d4ed8'; // blue-700 - even darker for better visibility
-    return '#b45309'; // amber-700 - even darker for better visibility
+    if (percentage >= 85) return '#10b981'; // emerald-500
+    if (percentage >= 80) return '#22c55e'; // green-500
+    return '#f59e0b'; // amber-500
   };
 
   const getScoreGlowClass = (score: number) => {
     const percentage = formatMatchScore(score);
-    if (percentage >= 85) return 'progress-circle-success';
-    if (percentage >= 80) return 'progress-circle-glow';
-    return 'progress-circle-warning';
+    if (percentage >= 85) return 'progress-circle-excellent';
+    if (percentage >= 80) return 'progress-circle-strong';
+    return 'progress-circle-good';
   };
 
   const getScoreLabel = (score: number) => {
@@ -122,8 +149,8 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
   const scorePercentage = formatMatchScore(match.score);
   const strokeColor = getScoreStrokeColor(match.score);
   
-  // Calculate SVG circle properties
-  const radius = 45;
+  // Calculate SVG circle properties for larger size
+  const radius = 40; // Updated to match the new larger size
   const circumference = 2 * Math.PI * radius;
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (progressAnimation / 100) * circumference;
@@ -208,53 +235,67 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
           {/* Score Display */}
           <div className="text-center">
             <div className="relative inline-block">
-              {/* Background gradient */}
-              <div className={`absolute inset-0 w-32 h-32 rounded-full bg-gradient-to-r ${getScoreColor(match.score)} opacity-10 blur-sm progress-bg-pulse`}></div>
+              {/* Enhanced background gradient with green theme */}
+              <div className={`absolute inset-0 w-40 h-40 rounded-full bg-gradient-to-r ${getScoreColor(match.score)} opacity-20 blur-xl progress-bg-pulse`}></div>
               
-              {/* Additional background pattern for better visibility */}
-              <div className="absolute inset-0 w-32 h-32 rounded-full bg-white/30 dark:bg-neutral-800/30 backdrop-blur-sm"></div>
+              {/* Additional glowing background for better visibility */}
+              <div className="absolute inset-0 w-40 h-40 rounded-full bg-gradient-to-r from-green-400/30 to-emerald-400/30 backdrop-blur-sm animate-pulse-slow"></div>
               
-              {/* SVG Circular Progress Bar */}
-              <svg className="w-32 h-32 transform -rotate-90 relative z-10" viewBox="0 0 100 100">
-                {/* Background circle */}
+              {/* SVG Circular Progress Bar - Larger size */}
+              <svg className="w-40 h-40 transform -rotate-90 relative z-10" viewBox="0 0 100 100">
+                {/* Background circle with better styling */}
                 <circle
                   cx="50"
                   cy="50"
-                  r={radius / 2}
-                  stroke="#9ca3af"
-                  strokeWidth="8"
+                  r="40"
+                  stroke="#e5e7eb"
+                  strokeWidth="6"
                   fill="none"
-                  className="dark:stroke-neutral-400"
+                  className="dark:stroke-gray-600"
                 />
-                {/* Progress circle */}
+                {/* Progress circle with enhanced green styling */}
                 <circle
                   cx="50"
                   cy="50"
-                  r={radius / 2}
+                  r="40"
                   stroke={strokeColor}
                   strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
                   strokeDasharray={strokeDasharray}
                   strokeDashoffset={strokeDashoffset}
-                  className={`transition-all duration-2000 ease-out ${getScoreGlowClass(match.score)}`}
+                  className={`transition-all duration-3000 ease-out ${getScoreGlowClass(match.score)}`}
+                  style={{
+                    filter: `drop-shadow(0 0 8px ${strokeColor}40)`
+                  }}
                 />
-                {/* Center content with better background */}
-                <foreignObject x="25" y="25" width="50" height="50">
+                {/* Center content with perfect alignment */}
+                <foreignObject x="0" y="0" width="100" height="100">
                   <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center bg-white dark:bg-neutral-800 rounded-full p-3 shadow-xl border-2 border-gray-300 dark:border-neutral-600">
-                      <div className="text-xl font-black text-gray-900 dark:text-white progress-text-shadow">
-                        <CountUp end={progressAnimation} duration={2} />%
+                    <div className="flex flex-col items-center justify-center text-center" style={{ transform: 'rotate(90deg)' }}>
+                      <div className="text-2xl font-black text-green-700 dark:text-green-300 progress-text-shadow leading-none text-center" style={{ letterSpacing: '0px' }}>
+                        {displayValue}
+                      </div>
+                      <div className="text-xs text-green-600 dark:text-green-400 font-semibold uppercase tracking-wider leading-none mt-1 text-center">
+                        ACCUR
                       </div>
                     </div>
                   </div>
                 </foreignObject>
               </svg>
-              <div className="absolute -top-2 -right-2 text-2xl animate-float z-20">
+              
+              {/* Enhanced floating emoji with better positioning */}
+              <div className="absolute -top-3 -right-3 text-3xl animate-float z-20 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg border-2 border-green-200 dark:border-green-700">
                 {scoreInfo.emoji}
               </div>
+              
+              {/* Additional decorative elements */}
+              <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-ping opacity-75"></div>
+              <div className="absolute -top-2 -left-2 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
             </div>
-            <div className="mt-2 text-sm font-black text-gray-900 dark:text-white bg-white dark:bg-neutral-800 px-4 py-2 rounded-full backdrop-blur-sm progress-text-shadow border-2 border-gray-300 dark:border-neutral-600 shadow-lg">
+            
+            {/* Enhanced label with better styling */}
+            <div className="mt-4 text-sm font-black text-gray-900 dark:text-white bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-6 py-3 rounded-full backdrop-blur-sm progress-text-shadow border-2 border-green-200 dark:border-green-700 shadow-lg">
               {scoreInfo.label}
             </div>
           </div>

@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   en: {
     translation: {
-      'home.title': 'Find Your Perfect NCO Code',
+      'home.title': 'FIND THE PERFECT NCO CODE',
       'home.classification': 'National Classification of Occupation',
       'home.subtitle': 'Classification of Occupation code for you.',
       'home.describeJob': 'Describe Your Job',

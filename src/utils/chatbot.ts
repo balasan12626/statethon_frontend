@@ -31,9 +31,9 @@ export const createErrorMessage = (): ChatMessage => ({
 
 export const getInitialMessages = (): ChatMessage[] => [
   {
-    id: '1',
+    id: 'bot-welcome-msg',
     from: 'bot',
-    text: 'Hi! I\'m your NCO Career Assistant. Ask me anything about NCO Code 20215 and related career information.',
+    text: 'Hi! I\'m your NCO Career Assistant. Ask me anything about NCO Code 2015 and related career information.',
     timestamp: new Date()
   }
 ]; 

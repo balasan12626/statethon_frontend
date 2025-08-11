@@ -2,55 +2,176 @@ import i18next from 'i18next';
 
 // Translation provider interface removed
 
-// Google Translate helper
+// Google Translate helper with proper error handling
 const googleTranslate = {
   getElement: () => document.querySelector('.goog-te-combo') as HTMLSelectElement,
   
   setLanguage: (langCode: string) => {
-    const combo = googleTranslate.getElement();
-    if (!combo) return;
-    
-    if (combo.value !== langCode) {
-      combo.value = langCode;
-      combo.dispatchEvent(new Event('change'));
+    try {
+      const combo = googleTranslate.getElement();
+      if (!combo) {
+        console.log('Google Translate combo not found, skipping setLanguage');
+        return;
+      }
+      
+      if (combo.value !== langCode) {
+        combo.value = langCode;
+        combo.dispatchEvent(new Event('change'));
+      }
+      localStorage.setItem('preferred_lang', langCode);
+    } catch (error) {
+      console.log('Google Translate setLanguage failed:', error);
+      // Don't throw error, just log it
     }
-    localStorage.setItem('preferred_lang', langCode);
   },
 
   getCurrentLanguage: () => {
-    const combo = googleTranslate.getElement();
-    return combo?.value || 'en';
+    try {
+      const combo = googleTranslate.getElement();
+      return combo?.value || 'en';
+    } catch (error) {
+      console.log('Google Translate getCurrentLanguage failed:', error);
+      return 'en';
+    }
   },
 
   restoreLanguage: () => {
-    const saved = localStorage.getItem('preferred_lang');
-    if (saved) googleTranslate.setLanguage(saved);
+    try {
+      const saved = localStorage.getItem('preferred_lang');
+      if (saved) googleTranslate.setLanguage(saved);
+    } catch (error) {
+      console.log('Google Translate restoreLanguage failed:', error);
+    }
+  },
+
+  isAvailable: () => {
+    try {
+      return !!googleTranslate.getElement();
+    } catch (error) {
+      return false;
+    }
   }
 };
 
-// Language codes for major Indian languages
+// Complete Indian Languages Configuration
 export const INDIAN_LANGUAGES = {
-  en: { name: 'English', nativeName: 'English' },
-  hi: { name: 'Hindi', nativeName: 'हिंदी' },
-  bn: { name: 'Bengali', nativeName: 'বাংলা' },
-  te: { name: 'Telugu', nativeName: 'తెలుగు' },
-  ta: { name: 'Tamil', nativeName: 'தமிழ்' },
-  mr: { name: 'Marathi', nativeName: 'मराठी' },
-  ur: { name: 'Urdu', nativeName: 'اردو' },
-  gu: { name: 'Gujarati', nativeName: 'ગુજરાતી' },
-  kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
-  ml: { name: 'Malayalam', nativeName: 'മലയാളം' },
-  pa: { name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ' },
-  or: { name: 'Odia', nativeName: 'ଓଡ଼ିଆ' },
-  as: { name: 'Assamese', nativeName: 'অসমীয়া' },
-  sa: { name: 'Sanskrit', nativeName: 'संस्कृतम्' }
+  // Constitutional Languages (22 Scheduled Languages)
+  en: { name: 'English', nativeName: 'English', category: 'International' },
+  hi: { name: 'Hindi', nativeName: 'हिन्दी', category: 'Constitutional' },
+  as: { name: 'Assamese', nativeName: 'অসমীয়া', category: 'Constitutional' },
+  bn: { name: 'Bengali', nativeName: 'বাংলা', category: 'Constitutional' },
+  bh: { name: 'Bhojpuri', nativeName: 'भोजपुरी', category: 'Constitutional' },
+  bo: { name: 'Bodo', nativeName: 'बड़ो', category: 'Constitutional' },
+  dg: { name: 'Dogri', nativeName: 'डोगरी', category: 'Constitutional' },
+  gu: { name: 'Gujarati', nativeName: 'ગુજરાતી', category: 'Constitutional' },
+  kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ', category: 'Constitutional' },
+  ks: { name: 'Kashmiri', nativeName: 'کٲشُر', category: 'Constitutional' },
+  gom: { name: 'Konkani', nativeName: 'कोंकणी', category: 'Constitutional' },
+  mai: { name: 'Maithili', nativeName: 'मैथिली', category: 'Constitutional' },
+  ml: { name: 'Malayalam', nativeName: 'മലയാളം', category: 'Constitutional' },
+  mni: { name: 'Manipuri', nativeName: 'মৈতৈলোন্', category: 'Constitutional' },
+  mr: { name: 'Marathi', nativeName: 'मराठी', category: 'Constitutional' },
+  ne: { name: 'Nepali', nativeName: 'नेपाली', category: 'Constitutional' },
+  or: { name: 'Odia', nativeName: 'ଓଡ଼ିଆ', category: 'Constitutional' },
+  pa: { name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', category: 'Constitutional' },
+  sa: { name: 'Sanskrit', nativeName: 'संस्कृतम्', category: 'Constitutional' },
+  sat: { name: 'Santali', nativeName: 'ᱥᱟᱱᱛᱟᱲᱤ', category: 'Constitutional' },
+  sd: { name: 'Sindhi', nativeName: 'سنڌي', category: 'Constitutional' },
+  ta: { name: 'Tamil', nativeName: 'தமிழ்', category: 'Constitutional' },
+  te: { name: 'Telugu', nativeName: 'తెలుగు', category: 'Constitutional' },
+  ur: { name: 'Urdu', nativeName: 'اردو', category: 'Constitutional' },
+  
+  // Other Major Indian Languages
+  kok: { name: 'Konkani', nativeName: 'कोंकणी', category: 'Regional' },
+  brx: { name: 'Bodo', nativeName: 'बड़ो', category: 'Regional' },
+  'mni-Mtei': { name: 'Meitei (Manipuri)', nativeName: 'মৈতৈলোন্', category: 'Regional' },
+  lus: { name: 'Mizo', nativeName: 'Mizo', category: 'Regional' },
+  grt: { name: 'Garo', nativeName: 'Garo', category: 'Regional' },
+  kha: { name: 'Khasi', nativeName: 'Khasi', category: 'Regional' },
+  njo: { name: 'Ao', nativeName: 'Ao', category: 'Regional' },
+  njz: { name: 'Nyishi', nativeName: 'Nyishi', category: 'Regional' },
+  anp: { name: 'Angika', nativeName: 'अंगिका', category: 'Regional' },
+  bfy: { name: 'Bagheli', nativeName: 'बघेली', category: 'Regional' },
+  bho: { name: 'Bhojpuri', nativeName: 'भोजपुरी', category: 'Regional' },
+  mag: { name: 'Magahi', nativeName: 'मगही', category: 'Regional' },
+  new: { name: 'Newari', nativeName: 'नेपाल भाषा', category: 'Regional' },
+  raj: { name: 'Rajasthani', nativeName: 'राजस्थानी', category: 'Regional' },
+  tcy: { name: 'Tulu', nativeName: 'ತುಳು', category: 'Regional' },
+  
+  // Script Variants
+  'hi-Latn': { name: 'Hindi (Latin)', nativeName: 'Hindi', category: 'Script Variant' },
+  'ur-Latn': { name: 'Urdu (Latin)', nativeName: 'Urdu', category: 'Script Variant' },
+  'pa-Arab': { name: 'Punjabi (Arabic)', nativeName: 'پنجابی', category: 'Script Variant' },
+  'pa-Guru': { name: 'Punjabi (Gurmukhi)', nativeName: 'ਪੰਜਾਬੀ', category: 'Script Variant' },
+  'ks-Arab': { name: 'Kashmiri (Arabic)', nativeName: 'کٲشُر', category: 'Script Variant' },
+  'ks-Deva': { name: 'Kashmiri (Devanagari)', nativeName: 'कॉशुर', category: 'Script Variant' },
+  wbq: { name: 'Waddar', nativeName: 'Waddar', category: 'Regional' }
+};
+
+// Translation API interface
+interface TranslationRequest {
+  html_content: string;
+  target_lang: string;
+}
+
+interface TranslationResponse {
+  translated_html: string;
+  target_language: string;
+  target_language_code: string;
+  translation_count: number;
+  status: string;
+  message: string;
+}
+
+// Translation API helper
+const translationAPI = {
+  async translatePage(htmlContent: string, targetLang: string): Promise<TranslationResponse> {
+    try {
+      const response = await fetch('/translate/translate-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          html_content: htmlContent,
+          target_lang: targetLang
+        } as TranslationRequest)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Translation API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data: TranslationResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Translation API error:', error);
+      throw error;
+    }
+  },
+
+  async translateText(text: string, targetLang: string): Promise<string> {
+    try {
+      const response = await this.translatePage(`<p>${text}</p>`, targetLang);
+      // Extract text from translated HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = response.translated_html;
+      return tempDiv.textContent || tempDiv.innerText || text;
+    } catch (error) {
+      console.error('Text translation error:', error);
+      return text; // Return original text if translation fails
+    }
+  }
 };
 
 // Auto-detect user's preferred language
 export function detectUserLanguage(): string {
   // Check localStorage first
   const saved = localStorage.getItem('preferred_lang');
-  if (saved) return saved;
+  if (saved && INDIAN_LANGUAGES[saved as keyof typeof INDIAN_LANGUAGES]) {
+    return saved;
+  }
 
   // Check browser language
   const browserLang = navigator.language.split('-')[0];
@@ -64,28 +185,61 @@ export function detectUserLanguage(): string {
 
 // Initialize translation system
 export function initializeTranslation() {
-  // Set up i18next for static content
-  const userLang = detectUserLanguage();
-  i18next.changeLanguage(userLang);
+  const detectedLang = detectUserLanguage();
   
-  // Set up Google Translate for dynamic content
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      googleTranslate.restoreLanguage();
-    }, 1000);
+  // Initialize i18next
+  i18next.init({
+    lng: detectedLang,
+    fallbackLng: 'en',
+    debug: false,
+    resources: {
+      en: { translation: {} },
+      hi: { translation: {} },
+      // Add other languages as needed
+    }
   });
+
+  // Restore Google Translate language
+  googleTranslate.restoreLanguage();
 }
 
 // Change language across all translation systems
 export function changeLanguage(langCode: string) {
-  // Update i18next
-  i18next.changeLanguage(langCode);
+  try {
+    // Update i18next
+    i18next.changeLanguage(langCode);
+    
+    // Update Google Translate only if available
+    if (googleTranslate.isAvailable()) {
+      googleTranslate.setLanguage(langCode);
+    }
+    
+    // Store preference
+    localStorage.setItem('preferred_lang', langCode);
+  } catch (error) {
+    console.log('Error in changeLanguage:', error);
+    // Still update i18next and localStorage even if Google Translate fails
+    i18next.changeLanguage(langCode);
+    localStorage.setItem('preferred_lang', langCode);
+  }
+}
+
+// Get language by category
+export function getLanguagesByCategory() {
+  const categories: { [key: string]: Array<{ code: string; name: string; nativeName: string }> } = {};
   
-  // Update Google Translate
-  googleTranslate.setLanguage(langCode);
+  Object.entries(INDIAN_LANGUAGES).forEach(([code, lang]) => {
+    if (!categories[lang.category]) {
+      categories[lang.category] = [];
+    }
+    categories[lang.category].push({
+      code,
+      name: lang.name,
+      nativeName: lang.nativeName
+    });
+  });
   
-  // Store preference
-  localStorage.setItem('preferred_lang', langCode);
+  return categories;
 }
 
 export default {
@@ -93,5 +247,8 @@ export default {
   changeLanguage,
   detectLanguage: detectUserLanguage,
   INDIAN_LANGUAGES,
-  getCurrentLanguage: googleTranslate.getCurrentLanguage
+  getCurrentLanguage: googleTranslate.getCurrentLanguage,
+  translatePage: translationAPI.translatePage.bind(translationAPI),
+  translateText: translationAPI.translateText.bind(translationAPI),
+  getLanguagesByCategory
 };

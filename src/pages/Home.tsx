@@ -43,6 +43,7 @@ interface SearchResponse {
     success: boolean;
     input: string;
     topMatch: NCOMatch;
+    allMatches?: NCOMatch[]; // Optional array of all matches
   };
 }
 
@@ -132,9 +133,12 @@ const Home = () => {
     api: MultiAgentResponse
   ): SearchResponse | null => {
     if (!api || !api.matches || api.matches.length === 0) return null;
-    // Pick the best scoring match
-    const top = [...api.matches].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
-
+    
+    // Sort all matches by score (highest first)
+    const sortedMatches = [...api.matches].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    
+    // Get the top match for backward compatibility
+    const top = sortedMatches[0];
     const topMatch: NCOMatch = {
       title: top.title || 'Unknown',
       score: typeof top.score === 'number' ? top.score : 0,
@@ -145,12 +149,24 @@ const Home = () => {
       }
     };
 
+    // Transform all matches for display
+    const allMatches: NCOMatch[] = sortedMatches.map(match => ({
+      title: match.title || 'Unknown',
+      score: typeof match.score === 'number' ? match.score : 0,
+      metadata: {
+        nco_code: match.nco_code || String(match.id || ''),
+        title: match.title || 'Unknown',
+        description: match.description || 'No description available'
+      }
+    }));
+
     return {
       success: true,
       data: {
         success: true,
         input: inputText,
-        topMatch
+        topMatch,
+        allMatches // Include all matches for display
       }
     };
   };
@@ -343,8 +359,8 @@ const Home = () => {
     try {
       console.log('Sending request to local multi-agent backend...');
 
-      // Always send top_k = 3 as requested
-      const multiAgent = await requestMultiAgent({ query: jobDescription.trim(), top_k: 3 });
+      // Always send top_k = 5 as requested
+      const multiAgent = await requestMultiAgent({ query: jobDescription.trim(), top_k: 5 });
 
       // Transform into UI structure
       const data = transformMultiAgentToSearchResponse(jobDescription.trim(), multiAgent);
@@ -552,26 +568,20 @@ Generated on: ${new Date().toLocaleString()}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                {t('home.title').split('NCO Code').map((part, index) => (
-                  <span key={index}>
-                    {part}
-                    {index === 0 && (
-                      <motion.span 
-                        className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent"
-                        animate={{ 
-                          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                        }}
-                        transition={{ 
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        NCO Code
-                      </motion.span>
-                    )}
-                  </span>
-                ))}
+                <span>FIND THE PERFECT </span>
+                <motion.span 
+                  className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent"
+                  animate={{ 
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  NCO CODE
+                </motion.span>
               </motion.h1>
               <motion.p 
                 className="text-xl md:text-2xl font-semibold text-neutral-700 dark:text-neutral-200 mb-2 max-w-3xl mx-auto leading-relaxed"
@@ -648,6 +658,8 @@ Generated on: ${new Date().toLocaleString()}
                 ))}
               </div>
             </motion.div>
+
+
 
             {/* Enhanced Search Section */}
             <motion.div 
@@ -766,15 +778,41 @@ Generated on: ${new Date().toLocaleString()}
                     </motion.div>
                   )}
 
-                  {/* Enhanced Match Result Card */}
-                  <EnhancedResultCard
-                    match={searchResult.data.topMatch}
-                    searchInput={searchResult.data.input}
-                    onDownload={downloadPDF}
-                    onShare={shareResult}
-                    onCopyCode={() => copyToClipboard(getNCOCode(searchResult.data.topMatch.metadata))}
-                    copied={copied}
-                  />
+                  {/* Enhanced Match Result Cards - Show all matches */}
+                  {searchResult.data.allMatches && searchResult.data.allMatches.length > 0 ? (
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                        Top {searchResult.data.allMatches.length} Job Matches
+                      </h3>
+                      {searchResult.data.allMatches.map((match, index) => (
+                        <div key={`${match.metadata.nco_code}-${index}`} className="relative">
+                          {index === 0 && (
+                            <div className="absolute -top-2 -left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                              Best Match
+                            </div>
+                          )}
+                          <EnhancedResultCard
+                            match={match}
+                            searchInput={searchResult.data.input}
+                            onDownload={downloadPDF}
+                            onShare={shareResult}
+                            onCopyCode={() => copyToClipboard(getNCOCode(match.metadata))}
+                            copied={copied}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Fallback to single top match if allMatches is not available
+                    <EnhancedResultCard
+                      match={searchResult.data.topMatch}
+                      searchInput={searchResult.data.input}
+                      onDownload={downloadPDF}
+                      onShare={shareResult}
+                      onCopyCode={() => copyToClipboard(getNCOCode(searchResult.data.topMatch.metadata))}
+                      copied={copied}
+                    />
+                  )}
 
 
                   {/* Enhanced AI Analysis Loading */}

@@ -75,7 +75,7 @@ The chatbot sends requests to `/api/langchain/chat` with the following format:
 **Request:**
 ```json
 {
-  "message": "What is NCO code 20215?",
+  "message": "What is NCO code 2015?",
   "model": "groq"
 }
 ```

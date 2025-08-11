@@ -15,6 +15,15 @@ export default defineConfig({
         proxyTimeout: 120000,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
+      // Translation API on port 8000
+      '/translate': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        timeout: 30000,
+        proxyTimeout: 30000,
+        rewrite: (path) => path.replace(/^\/translate/, '')
+      },
       // Optional fallback backend on port 8000
       '/api8000': {
         target: 'http://localhost:8000',
