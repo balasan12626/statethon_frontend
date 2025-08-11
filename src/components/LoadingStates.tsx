@@ -33,9 +33,9 @@ export const SearchLoadingState: React.FC = () => {
   }, []);
 
   const steps = [
-    { icon: Target, text: "Analyzing job requirements", threshold: 33 },
-    { icon: Brain, text: "Processing semantic similarity", threshold: 66 },
-    { icon: Zap, text: "Matching with NCO database", threshold: 100 }
+    { icon: Target, text: "Analyzing your job requirements", threshold: 33 },
+    { icon: Brain, text: "Matching skills to job database", threshold: 66 },
+    { icon: Zap, text: "Finding your perfect NCO match", threshold: 100 }
   ];
 
   return (
@@ -56,11 +56,11 @@ export const SearchLoadingState: React.FC = () => {
         </div>
         
         <h3 className="text-xl font-semibold text-neutral-800 dark:text-white mb-2">
-          AI is Analyzing Your Job Description
+          AI is Finding Your Perfect Match
         </h3>
         
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-          Please wait while our advanced AI processes your job description...
+          Our advanced AI is analyzing your job description to find the best NCO code match...
         </p>
         
         <div className="space-y-3 mb-6">
@@ -92,7 +92,7 @@ export const SearchLoadingState: React.FC = () => {
           <ProgressBar 
             progress={Math.round(progress)} 
             label="Analysis Progress" 
-            color="from-success-500 to-accent-500" 
+            color="from-green-500 to-emerald-500" 
           />
         </div>
 
@@ -211,16 +211,16 @@ interface ProgressBarProps {
 export const ProgressBar: React.FC<ProgressBarProps> = ({ 
   progress, 
   label, 
-  color = 'from-primary-500 to-secondary-500' 
+  color = 'from-green-500 to-emerald-500' 
 }) => (
   <div className="space-y-2">
     <div className="flex justify-between text-sm">
       <span className="text-neutral-600 dark:text-neutral-400">{label}</span>
       <span className="font-medium text-neutral-800 dark:text-white">{progress}%</span>
     </div>
-    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2 overflow-hidden">
+    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-3 overflow-hidden shadow-inner">
       <motion.div
-        className={`h-full bg-gradient-to-r ${color} rounded-full`}
+        className={`h-full bg-gradient-to-r ${color} rounded-full progress-bar-green`}
         initial={{ width: 0 }}
         animate={{ width: `${progress}%` }}
         transition={{ duration: 1.5, ease: "easeOut" }}

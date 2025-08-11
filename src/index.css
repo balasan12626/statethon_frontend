@@ -125,4 +125,171 @@
   .animate-spin-slow {
     animation: spin 3s linear infinite;
   }
+
+  /* Circular Progress Bar Animations */
+  .progress-circle-glow {
+    filter: drop-shadow(0 0 16px rgba(29, 78, 216, 0.6));
+    animation: progressGlow 2s ease-in-out infinite alternate;
+  }
+
+  .progress-circle-success {
+    filter: drop-shadow(0 0 16px rgba(4, 120, 87, 0.6));
+    animation: progressGlowSuccess 2s ease-in-out infinite alternate;
+  }
+
+  .progress-circle-warning {
+    filter: drop-shadow(0 0 16px rgba(180, 83, 9, 0.6));
+    animation: progressGlowWarning 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes progressGlow {
+    0% {
+      filter: drop-shadow(0 0 12px rgba(29, 78, 216, 0.5));
+    }
+    100% {
+      filter: drop-shadow(0 0 20px rgba(29, 78, 216, 0.8));
+    }
+  }
+
+  @keyframes progressGlowSuccess {
+    0% {
+      filter: drop-shadow(0 0 12px rgba(4, 120, 87, 0.5));
+    }
+    100% {
+      filter: drop-shadow(0 0 20px rgba(4, 120, 87, 0.8));
+    }
+  }
+
+  @keyframes progressGlowWarning {
+    0% {
+      filter: drop-shadow(0 0 12px rgba(180, 83, 9, 0.5));
+    }
+    100% {
+      filter: drop-shadow(0 0 20px rgba(180, 83, 9, 0.8));
+    }
+  }
+
+  /* Progress bar fill animation */
+  .progress-fill {
+    animation: progressFill 2s ease-out forwards;
+  }
+
+  /* Green progress bar glow effect */
+  .progress-bar-green {
+    box-shadow: 
+      0 0 10px rgba(34, 197, 94, 0.6),
+      0 0 20px rgba(34, 197, 94, 0.4),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    animation: progressGlow 2s ease-in-out infinite alternate;
+  }
+
+  .dark .progress-bar-green {
+    box-shadow: 
+      0 0 15px rgba(34, 197, 94, 0.8),
+      0 0 30px rgba(34, 197, 94, 0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  }
+
+  @keyframes progressGlow {
+    0% {
+      box-shadow: 
+        0 0 8px rgba(34, 197, 94, 0.5),
+        0 0 16px rgba(34, 197, 94, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      box-shadow: 
+        0 0 15px rgba(34, 197, 94, 0.8),
+        0 0 25px rgba(34, 197, 94, 0.5),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  @keyframes progressFill {
+    from {
+      stroke-dashoffset: 283; /* Full circle circumference */
+    }
+    to {
+      stroke-dashoffset: var(--progress-offset);
+    }
+  }
+
+  /* Background gradient pulse */
+  .progress-bg-pulse {
+    animation: progressBgPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes progressBgPulse {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.2;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Text visibility improvements */
+  .text-shadow-sm {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .text-shadow-md {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  }
+
+  .dark .text-shadow-sm {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .dark .text-shadow-md {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Progress bar text specific shadows */
+  .progress-text-shadow {
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .progress-text-shadow {
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7), 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Copy feedback animation */
+  .copy-feedback {
+    animation: copyFeedback 0.6s ease-out;
+  }
+
+  @keyframes copyFeedback {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* High contrast text for better accessibility */
+  .text-high-contrast {
+    color: #1f2937; /* gray-800 */
+  }
+
+  .dark .text-high-contrast {
+    color: #f9fafb; /* gray-50 */
+  }
+
+  .text-heading-contrast {
+    color: #111827; /* gray-900 */
+  }
+
+  .dark .text-heading-contrast {
+    color: #ffffff;
+  }
 }

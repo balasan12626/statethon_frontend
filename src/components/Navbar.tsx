@@ -18,15 +18,20 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-600 to-green-600 rounded-lg flex items-center justify-center">
+            <Link to="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-600 to-green-600 rounded-lg flex items-center justify-center shadow-md">
                 <div className="relative">
                   <img src="/nco-logo.png" alt="NCO Logo" className="w-6 h-6" />
                 </div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">{t('nav.logo')}</h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{t('nav.subtitle')}</p>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">{t('nav.logo')}</h1>
+                <p className="text-xs text-gray-700 dark:text-gray-300 font-medium leading-tight">{t('nav.subtitle')}</p>
+              </div>
+              {/* Mobile logo text */}
+              <div className="sm:hidden">
+                <h1 className="text-base font-bold text-gray-900 dark:text-white leading-tight">{t('nav.logo')}</h1>
+                <p className="text-xs text-gray-700 dark:text-gray-300 font-medium leading-tight">NCO</p>
               </div>
             </Link>
           </div>

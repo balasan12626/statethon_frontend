@@ -5,6 +5,7 @@ const resources = {
   en: {
     translation: {
       'home.title': 'Find Your Perfect NCO Code',
+      'home.classification': 'National Classification of Occupation',
       'home.subtitle': 'Classification of Occupation code for you.',
       'home.describeJob': 'Describe Your Job',
       'home.voiceInput': 'Voice Input',
@@ -20,12 +21,13 @@ const resources = {
       'nav.about': 'About',
       'nav.contact': 'Contact',
       'nav.logo': 'Indian NCO',
-      'nav.subtitle': 'National Career Service',
+      'nav.subtitle': 'National Classification of Occupations',
     }
   },
   hi: {
     translation: {
       'home.title': 'अपना सही NCO कोड खोजें',
+      'home.classification': 'राष्ट्रीय व्यवसाय वर्गीकरण',
       'home.subtitle': 'आपके लिए व्यवसाय वर्गीकरण कोड।',
       'home.describeJob': 'अपनी नौकरी का वर्णन करें',
       'home.voiceInput': 'आवाज इनपुट',
@@ -41,12 +43,13 @@ const resources = {
       'nav.about': 'के बारे में',
       'nav.contact': 'संपर्क',
       'nav.logo': 'भारतीय NCO',
-      'nav.subtitle': 'राष्ट्रीय कैरियर सेवा',
+      'nav.subtitle': 'राष्ट्रीय व्यवसाय वर्गीकरण',
     }
   },
   bn: {
     translation: {
       'home.title': 'আপনার নিখুঁত NCO কোড খুঁজুন',
+      'home.classification': 'জাতীয় পেশা শ্রেণীবিভাগ',
       'home.subtitle': 'আপনার জন্য পেশা শ্রেণীবিভাগ কোড।',
       'home.describeJob': 'আপনার চাকরির বর্ণনা দিন',
       'home.voiceInput': 'ভয়েস ইনপুট',
@@ -62,12 +65,13 @@ const resources = {
       'nav.about': 'সম্পর্কে',
       'nav.contact': 'যোগাযোগ',
       'nav.logo': 'ভারতীয় NCO',
-      'nav.subtitle': 'জাতীয় ক্যারিয়ার সেবা',
+      'nav.subtitle': 'জাতীয় পেশা শ্রেণীবিভাগ',
     }
   },
   ta: {
     translation: {
       'home.title': 'உங்கள் சரியான NCO கோடைக் கண்டறியவும்',
+      'home.classification': 'தேசிய தொழில் வகைப்பாடு',
       'home.subtitle': 'உங்களுக்கான தொழில் வகைப்பாட்டு கோடு.',
       'home.describeJob': 'உங்கள் வேலையை விவரிக்கவும்',
       'home.voiceInput': 'குரல் உள்ளீடு',
@@ -83,7 +87,7 @@ const resources = {
       'nav.about': 'பற்றி',
       'nav.contact': 'தொடர்பு',
       'nav.logo': 'இந்திய NCO',
-      'nav.subtitle': 'தேசிய வேலைவாய்ப்பு சேவை',
+      'nav.subtitle': 'தேசிய தொழில் வகைப்பாடு',
     }
   }
 };

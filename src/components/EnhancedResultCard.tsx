@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Copy, 
@@ -7,7 +7,9 @@ import {
   Share2, 
   Bookmark, 
   ExternalLink,
-  Target
+  Target,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import CountUp from 'react-countup';
 
@@ -44,6 +46,23 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
   copied
 }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [progressAnimation, setProgressAnimation] = useState(0);
+  const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+
+  // Animate progress bar on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgressAnimation(formatMatchScore(match.score));
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [match.score]);
+
+  // Handle copy with feedback
+  const handleCopy = () => {
+    onCopyCode();
+    setShowCopyFeedback(true);
+    setTimeout(() => setShowCopyFeedback(false), 600);
+  };
 
   // Helper functions
   const formatMatchScore = (_score: number) => {
@@ -65,9 +84,23 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
 
   const getScoreColor = (score: number) => {
     const percentage = formatMatchScore(score);
-    if (percentage >= 85) return 'from-success-500 to-accent-500';
-    if (percentage >= 80) return 'from-primary-500 to-secondary-500';
-    return 'from-warning-500 to-warning-600'; // For 75% case
+    if (percentage >= 85) return 'from-emerald-500 to-green-500';
+    if (percentage >= 80) return 'from-blue-500 to-cyan-500';
+    return 'from-orange-500 to-yellow-500'; // For 75% case
+  };
+
+  const getScoreStrokeColor = (score: number) => {
+    const percentage = formatMatchScore(score);
+    if (percentage >= 85) return '#047857'; // emerald-700 - even darker for better visibility
+    if (percentage >= 80) return '#1d4ed8'; // blue-700 - even darker for better visibility
+    return '#b45309'; // amber-700 - even darker for better visibility
+  };
+
+  const getScoreGlowClass = (score: number) => {
+    const percentage = formatMatchScore(score);
+    if (percentage >= 85) return 'progress-circle-success';
+    if (percentage >= 80) return 'progress-circle-glow';
+    return 'progress-circle-warning';
   };
 
   const getScoreLabel = (score: number) => {
@@ -86,6 +119,14 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
   };
 
   const scoreInfo = getScoreLabel(match.score);
+  const scorePercentage = formatMatchScore(match.score);
+  const strokeColor = getScoreStrokeColor(match.score);
+  
+  // Calculate SVG circle properties
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDasharray = circumference;
+  const strokeDashoffset = circumference - (progressAnimation / 100) * circumference;
 
   return (
     <motion.div 
@@ -110,13 +151,22 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
           {/* NCO Code and Title */}
           <div className="flex-1">
             <div className="flex items-center gap-4 mb-4">
-              <div className={`bg-gradient-to-r ${getScoreColor(match.score)} text-white px-6 py-3 rounded-2xl font-bold text-xl shadow-medium`}>
-                NCO {getNCOCode()}
-              </div>
+              <motion.div 
+                onClick={handleCopy}
+                className={`bg-gradient-to-r ${getScoreColor(match.score)} text-white px-6 py-3 rounded-2xl font-bold text-xl shadow-medium hover:shadow-lg transition-all duration-200 cursor-pointer border-2 border-white/20 hover:border-white/40 ${showCopyFeedback ? 'copy-feedback' : ''}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                title="Click to copy NCO code"
+              >
+                <div className="text-center">
+                  <div>NCO {getNCOCode()}</div>
+                  <div className="text-xs font-normal opacity-90">Primary Education</div>
+                </div>
+              </motion.div>
               
               <motion.button
-                onClick={onCopyCode}
-                className="p-3 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 transition-colors"
+                onClick={handleCopy}
+                className="p-3 rounded-xl bg-white/20 dark:bg-black/20 hover:bg-white/50 dark:hover:bg-black/40 transition-colors border border-white/30 dark:border-black/30"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title="Copy NCO Code"
@@ -138,7 +188,7 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
               </motion.button>
             </div>
 
-            <h2 className="text-3xl font-bold text-neutral-800 dark:text-white mb-2">
+            <h2 className="text-3xl font-bold text-heading-contrast mb-2">
               {getJobTitle()}
             </h2>
             
@@ -149,8 +199,8 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
               <span className="bg-secondary-100 dark:bg-secondary-900/30 text-secondary-800 dark:text-secondary-300 px-3 py-1 rounded-full text-sm font-medium">
                 High Demand
               </span>
-              <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm font-medium">
-                Growth: +{mockJobData.growthRate}%
+              <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm font-bold text-base">
+                📈 Growth: +{mockJobData.growthRate}%
               </span>
             </div>
           </div>
@@ -158,20 +208,53 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
           {/* Score Display */}
           <div className="text-center">
             <div className="relative inline-block">
-              <div className={`w-24 h-24 rounded-full bg-gradient-to-r ${getScoreColor(match.score)} p-1 shadow-glow-lg`}>
-                <div className="w-full h-full bg-white dark:bg-neutral-800 rounded-full flex items-center justify-center">
-                  <div className="text-center">
-                    <div className={`text-2xl font-bold bg-gradient-to-r ${getScoreColor(match.score)} bg-clip-text text-transparent`}>
-                      <CountUp end={formatMatchScore(match.score)} duration={2} />%
+              {/* Background gradient */}
+              <div className={`absolute inset-0 w-32 h-32 rounded-full bg-gradient-to-r ${getScoreColor(match.score)} opacity-10 blur-sm progress-bg-pulse`}></div>
+              
+              {/* Additional background pattern for better visibility */}
+              <div className="absolute inset-0 w-32 h-32 rounded-full bg-white/30 dark:bg-neutral-800/30 backdrop-blur-sm"></div>
+              
+              {/* SVG Circular Progress Bar */}
+              <svg className="w-32 h-32 transform -rotate-90 relative z-10" viewBox="0 0 100 100">
+                {/* Background circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius / 2}
+                  stroke="#9ca3af"
+                  strokeWidth="8"
+                  fill="none"
+                  className="dark:stroke-neutral-400"
+                />
+                {/* Progress circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius / 2}
+                  stroke={strokeColor}
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={strokeDasharray}
+                  strokeDashoffset={strokeDashoffset}
+                  className={`transition-all duration-2000 ease-out ${getScoreGlowClass(match.score)}`}
+                />
+                {/* Center content with better background */}
+                <foreignObject x="25" y="25" width="50" height="50">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-center bg-white dark:bg-neutral-800 rounded-full p-3 shadow-xl border-2 border-gray-300 dark:border-neutral-600">
+                      <div className="text-xl font-black text-gray-900 dark:text-white progress-text-shadow">
+                        <CountUp end={progressAnimation} duration={2} />%
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="absolute -top-2 -right-2 text-2xl animate-float">
+                </foreignObject>
+              </svg>
+              <div className="absolute -top-2 -right-2 text-2xl animate-float z-20">
                 {scoreInfo.emoji}
               </div>
             </div>
-            <div className="mt-2 text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+            <div className="mt-2 text-sm font-black text-gray-900 dark:text-white bg-white dark:bg-neutral-800 px-4 py-2 rounded-full backdrop-blur-sm progress-text-shadow border-2 border-gray-300 dark:border-neutral-600 shadow-lg">
               {scoreInfo.label}
             </div>
           </div>
@@ -184,12 +267,50 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
       <div className="p-8">
         {/* Job Description */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-3">
+          <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-3 flex items-center gap-2">
+            <span className="text-2xl">📋</span>
             Job Description
           </h3>
-          <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
-            {getJobDescription()}
-          </p>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700">
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              {getJobDescription()}
+            </p>
+            
+            {/* Key Responsibilities with Icons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+              <div className="flex items-start gap-3">
+                <span className="text-xl">📚</span>
+                <div>
+                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Teaching Subjects</h4>
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Reading, writing, arithmetic, language, social science, moral science, history, geography</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <span className="text-xl">📝</span>
+                <div>
+                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Assessment & Records</h4>
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Conduct tests, prepare results, maintain attendance records</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <span className="text-xl">🏆</span>
+                <div>
+                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Extracurricular Activities</h4>
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Organize hobbies, sports, dramatics, and other activities</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <span className="text-xl">💰</span>
+                <div>
+                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Administrative Duties</h4>
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Collect fees, submit accounts, maintain school registers</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Match Analysis */}
@@ -203,8 +324,12 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
                 Why This Matches Your Description
               </h4>
               <p className="text-primary-800 dark:text-primary-200 leading-relaxed">
-                Your job description <span className="font-semibold">"{searchInput}"</span> aligns with this NCO code based on AI analysis of skills, responsibilities, and industry requirements. The semantic matching considers both explicit and implicit job characteristics.
+                Your job description <span className="font-semibold bg-primary-100 dark:bg-primary-900/30 px-2 py-1 rounded">"{searchInput}"</span> perfectly aligns with this NCO code based on our advanced AI analysis. We matched your skills, responsibilities, and industry requirements using semantic analysis that considers both explicit and implicit job characteristics.
               </p>
+              <div className="mt-3 flex items-center gap-2 text-sm text-primary-700 dark:text-primary-300">
+                <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
+                <span>AI Confidence: High</span>
+              </div>
             </div>
           </div>
         </div>
@@ -234,7 +359,7 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
           </motion.button>
           
           <motion.button 
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-2xl font-medium shadow-medium hover:shadow-hard transition-all"
+            className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-medium shadow-medium hover:shadow-hard transition-all border-2 border-blue-500/20 hover:border-blue-500/40"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

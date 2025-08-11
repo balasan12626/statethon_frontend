@@ -574,6 +574,14 @@ Generated on: ${new Date().toLocaleString()}
                 ))}
               </motion.h1>
               <motion.p 
+                className="text-xl md:text-2xl font-semibold text-neutral-700 dark:text-neutral-200 mb-2 max-w-3xl mx-auto leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                {t('home.classification')}
+              </motion.p>
+              <motion.p 
                 className="text-lg md:text-xl text-neutral-600 dark:text-neutral-300 mb-8 max-w-3xl mx-auto leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
