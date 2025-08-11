@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 export const ContactSEO = () => {
-  const canonicalUrl = 'https://your-domain.com';
+  const canonicalUrl = 'https://nco-search-india.netlify.app';
   const currentUrl = `${canonicalUrl}/contact`;
   
   const contactPageSchema = {
@@ -97,6 +97,19 @@ export const ContactSEO = () => {
     ]
   };
 
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Contact NCO India - Get Support & Information',
+    description: 'Contact the National Classification of Occupation (NCO) team for support, feedback, or inquiries about job classification and career services in India. Get expert assistance with NCO codes.',
+    url: currentUrl,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'NCO Code Search India',
+      url: canonicalUrl
+    }
+  };
+
   return (
     <Helmet>
       {/* Page-specific Meta Tags */}
@@ -146,6 +159,11 @@ export const ContactSEO = () => {
       {/* FAQ Schema */}
       <script type="application/ld+json">
         {JSON.stringify(faqSchema)}
+      </script>
+
+      {/* WebPage Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(webPageSchema)}
       </script>
     </Helmet>
   );

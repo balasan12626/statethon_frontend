@@ -10,7 +10,7 @@ interface SEOProps {
 export const SEO = ({
   title = 'NCO Code Search India | NCS Job Portal | Find Government Jobs',
   description = 'Search NCO codes & NCS job listings in India. AI-powered job matching with National Career Service (NCS). Find government jobs by NCO classification codes.',
-  canonicalUrl = 'https://your-domain.com', // Replace with your actual domain
+  canonicalUrl = 'https://nco-search-india.netlify.app', // Updated with actual domain
   path = '',
 }: SEOProps) => {
   const currentUrl = `${canonicalUrl}${path}`;
@@ -54,6 +54,32 @@ export const SEO = ({
     }
   };
 
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'National Classification of Occupation (NCO) India',
+    url: canonicalUrl,
+    logo: `${canonicalUrl}/logo.png`,
+    description: 'Official Indian National Classification of Occupations (NCO) system providing standardized job classifications and AI-powered semantic search for career matching.',
+    foundingDate: '2015',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'IN',
+      addressRegion: 'All India'
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'support@nco.gov.in',
+      availableLanguage: ['English', 'Hindi', 'Bengali', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Gujarati', 'Punjabi', 'Odia', 'Assamese', 'Marathi', 'Sanskrit']
+    },
+    sameAs: [
+      'https://www.ncs.gov.in',
+      'https://www.linkedin.com/company/nco-india',
+      'https://twitter.com/nco_india'
+    ]
+  };
+
   return (
     <Helmet>
       {/* Essential Meta Tags */}
@@ -73,8 +99,9 @@ export const SEO = ({
 
       {/* Mobile and Crawler Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="robots" content="index, follow, max-image-preview:large" />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <meta name="googlebot" content="index, follow" />
+      <meta name="bingbot" content="index, follow" />
 
       {/* Performance Optimizations */}
       <link rel="preload" href="/src/main.tsx" as="script" />
@@ -93,16 +120,17 @@ export const SEO = ({
       <meta property="og:site_name" content="NCO Code Search India" />
       <meta property="og:locale" content="en_IN" />
       <meta property="og:locale:alternate" content="hi_IN" />
-      <meta property="og:image" content={`${canonicalUrl}/og-image.jpg`} />
+      <meta property="og:image" content={`${canonicalUrl}/og-image.svg`} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content="NCO Code Search India - Find Government Jobs" />
+      <meta property="og:image:type" content="image/svg+xml" />
 
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${canonicalUrl}/og-image.jpg`} />
+      <meta name="twitter:image" content={`${canonicalUrl}/og-image.svg`} />
       <meta name="twitter:site" content="@ncs_india" />
       <meta name="twitter:creator" content="@ncs_india" />
 
@@ -126,12 +154,24 @@ export const SEO = ({
       <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
       <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 
+      {/* Additional SEO Meta Tags */}
+      <meta name="author" content="National Classification of Occupation (NCO) India" />
+      <meta name="copyright" content="Copyright © 2024 NCO India. All rights reserved." />
+      <meta name="coverage" content="Worldwide" />
+      <meta name="distribution" content="Global" />
+      <meta name="rating" content="General" />
+      <meta name="revisit-after" content="1 days" />
+      <meta name="generator" content="React + Vite" />
+
       {/* Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify(websiteSchema)}
       </script>
       <script type="application/ld+json">
         {JSON.stringify(jobPostingSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(organizationSchema)}
       </script>
     </Helmet>
   );

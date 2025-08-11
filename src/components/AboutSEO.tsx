@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 export const AboutSEO = () => {
-  const canonicalUrl = 'https://your-domain.com';
+  const canonicalUrl = 'https://nco-search-india.netlify.app';
   const currentUrl = `${canonicalUrl}/about`;
   
   const organizationSchema = {
@@ -77,6 +77,32 @@ export const AboutSEO = () => {
     ]
   };
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'About NCO India - National Classification of Occupations | AI-Powered Job Classification',
+    description: 'Learn about India\'s National Classification of Occupation (NCO) system. Discover how AI-powered semantic search revolutionizes job classification with 95% accuracy and multi-language support.',
+    image: `${canonicalUrl}/og-image.svg`,
+    author: {
+      '@type': 'Organization',
+      name: 'National Classification of Occupation (NCO) India'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'National Classification of Occupation (NCO) India',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${canonicalUrl}/logo.png`
+      }
+    },
+    datePublished: '2024-01-15T00:00:00Z',
+    dateModified: '2024-01-15T00:00:00Z',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': currentUrl
+    }
+  };
+
   return (
     <Helmet>
       {/* Page-specific Meta Tags */}
@@ -131,6 +157,11 @@ export const AboutSEO = () => {
       {/* FAQ Schema */}
       <script type="application/ld+json">
         {JSON.stringify(faqSchema)}
+      </script>
+
+      {/* Article Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(articleSchema)}
       </script>
     </Helmet>
   );
