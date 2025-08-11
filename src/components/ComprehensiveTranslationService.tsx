@@ -46,7 +46,7 @@ const ComprehensiveTranslationService: React.FC<ComprehensiveTranslationServiceP
       // Set up Google Translate if available
       const setupGoogleTranslate = () => {
         try {
-          if (typeof window !== 'undefined' && window.google && window.google.translate) {
+          if (typeof window !== 'undefined' && (window as any).google && (window as any).google.translate) {
             // Google Translate is available
             console.log('Google Translate is available');
           } else {

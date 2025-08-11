@@ -51,7 +51,7 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
 
   // Animate progress bar on mount
   useEffect(() => {
-    let animationTimer: NodeJS.Timeout;
+    let animationTimer: ReturnType<typeof setTimeout>;
     
     const timer = setTimeout(() => {
       const targetValue = formatMatchScore(match.score);

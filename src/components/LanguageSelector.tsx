@@ -291,14 +291,14 @@ const LanguageSelector: React.FC = () => {
 
           {/* Language List */}
           <div className="max-h-96 overflow-y-auto">
-            {Object.entries(groupedLanguages).map(([category, languages]) => (
+            {Object.entries(groupedLanguages).map(([category, languages]: [string, any]) => (
               <div key={category}>
                 {!searchTerm && (
                   <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-700">
                     {category}
                   </div>
                 )}
-                {languages.map(([code, lang]) => (
+                {languages.map(([code, lang]: [string, any]) => (
                   <button
                     key={code}
                     onClick={() => handleLanguageChange(code)}

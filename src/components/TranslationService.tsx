@@ -42,7 +42,7 @@ const TranslationService: React.FC<TranslationServiceProps> = ({ children }) => 
     
     // Set up Google Translate if available
     const setupGoogleTranslate = () => {
-      if (typeof window !== 'undefined' && window.google && window.google.translate) {
+      if (typeof window !== 'undefined' && (window as any).google && (window as any).google.translate) {
         // Google Translate is available
         console.log('Google Translate is available');
       }

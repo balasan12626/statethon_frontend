@@ -248,6 +248,7 @@ export default {
   detectLanguage: detectUserLanguage,
   INDIAN_LANGUAGES,
   getCurrentLanguage: googleTranslate.getCurrentLanguage,
+  setLanguage: googleTranslate.setLanguage,
   translatePage: translationAPI.translatePage.bind(translationAPI),
   translateText: translationAPI.translateText.bind(translationAPI),
   getLanguagesByCategory
