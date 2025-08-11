@@ -9,7 +9,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FloatingChatbot from './components/FloatingChatbot';
 import ComprehensiveTranslationService from './components/ComprehensiveTranslationService';
-import PageTranslator from './components/PageTranslator';
 import { SEO } from './components/SEO';
 import { AboutSEO } from './components/AboutSEO';
 import { ContactSEO } from './components/ContactSEO';
@@ -49,7 +48,6 @@ function App() {
                   </main>
                   <Footer />
                   <FloatingChatbot />
-                  <PageTranslator />
                 </div>
               </Router>
             </ComprehensiveTranslationService>
