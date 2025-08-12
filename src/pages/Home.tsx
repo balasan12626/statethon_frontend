@@ -531,24 +531,24 @@ Generated on: ${new Date().toLocaleString()}
       {/* Skip to content removed */}
       <div 
         id="main-content"
-        className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 transition-all duration-300"
+        className="min-h-screen bg-gradient-to-br from-white via-primary-50/30 to-secondary-50/30 dark:from-navy-900 dark:via-navy-800 dark:to-navy-900 transition-all duration-300"
       >
         {/* Enhanced Hero Section */}
         <div className="relative overflow-hidden">
-          {/* Animated background patterns */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-secondary-400"></div>
+          {/* Professional background patterns */}
+          <div className="absolute inset-0 opacity-5 dark:opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 dark:from-gold-500 dark:to-navy-600"></div>
             <motion.div 
               className="absolute inset-0"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: '30px 30px'
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23003366' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                backgroundSize: '40px 40px'
               }}
               animate={{ 
-                backgroundPosition: ['0px 0px', '30px 30px'],
+                backgroundPosition: ['0px 0px', '40px 40px'],
               }}
               transition={{ 
-                duration: 20,
+                duration: 30,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -563,19 +563,19 @@ Generated on: ${new Date().toLocaleString()}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h1 
-                className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4 leading-tight"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight text-shadow-lg"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <span>FIND THE PERFECT </span>
+                <span className="block mb-2">FIND THE PERFECT</span>
                 <motion.span 
-                  className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent"
+                  className="gradient-text-primary block text-shadow-md"
                   animate={{ 
                     backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
                   }}
                   transition={{ 
-                    duration: 3,
+                    duration: 4,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
@@ -627,15 +627,15 @@ Generated on: ${new Date().toLocaleString()}
                   <motion.div
                     key={index}
                     onClick={() => setJobDescription(example.text)}
-                    className="group bg-white dark:bg-neutral-800 p-6 rounded-3xl shadow-soft border border-neutral-200 dark:border-neutral-700 hover:shadow-medium transition-all duration-300 cursor-pointer hover:border-primary-300 dark:hover:border-primary-500 relative overflow-hidden"
-                    whileHover={{ scale: 1.02, y: -5 }}
+                    className="group card-hover p-8 relative overflow-hidden border-2 hover:border-primary-300 dark:hover:border-gold-500/50"
+                    whileHover={{ scale: 1.02, y: -8 }}
                     whileTap={{ scale: 0.98 }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
                   >
-                    {/* Hover gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/10 dark:to-secondary-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Professional hover gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white/30 to-secondary-50/50 dark:from-gold-500/5 dark:via-navy-800/50 dark:to-navy-700/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     <div className="relative flex items-start gap-4">
                       <motion.span 
@@ -646,10 +646,10 @@ Generated on: ${new Date().toLocaleString()}
                         {example.icon}
                       </motion.span>
                       <div className="flex-1">
-                        <p className="text-neutral-800 dark:text-neutral-200 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-medium leading-relaxed">
+                        <p className="text-neutral-800 dark:text-neutral-200 mb-4 group-hover:text-primary-700 dark:group-hover:text-gold-300 transition-colors font-semibold leading-relaxed text-lg">
                           "{example.text}"
                         </p>
-                        <span className="text-sm text-primary-600 dark:text-primary-400 font-medium bg-primary-100 dark:bg-primary-900/30 px-3 py-1 rounded-full">
+                        <span className="badge-primary text-sm font-semibold">
                           {example.category}
                         </span>
                       </div>
@@ -728,32 +728,32 @@ Generated on: ${new Date().toLocaleString()}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <div>
-                      <h3 className="text-2xl font-bold text-neutral-800 dark:text-white mb-2">
+                      <h3 className="text-3xl font-bold gradient-text-primary mb-3">
                         🎯 Your Perfect NCO Match
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-400">
-                        AI-powered analysis completed in 0.23 seconds
+                      <p className="text-neutral-600 dark:text-neutral-300 text-lg font-medium">
+                        Professional AI-powered analysis • Completed in 0.23 seconds
                       </p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-4">
                       <motion.button 
                         onClick={downloadPDF}
-                        className="flex items-center px-4 py-2 bg-gradient-to-r from-success-600 to-accent-600 text-white rounded-xl font-medium shadow-soft hover:shadow-medium transition-all"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="btn-primary flex items-center"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
+                        <Download className="w-5 h-5 mr-3" />
+                        Export Report
                       </motion.button>
                       {isMobile && (
                         <motion.button
                           onClick={() => setShowMobileShare(true)}
-                          className="flex items-center px-4 py-2 bg-gradient-to-r from-secondary-600 to-primary-600 text-white rounded-xl font-medium shadow-soft hover:shadow-medium transition-all"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          className="btn-secondary flex items-center"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          Share
+                          <Share2 className="w-5 h-5 mr-3" />
+                          Share Results
                         </motion.button>
                       )}
                     </div>
@@ -824,35 +824,38 @@ Generated on: ${new Date().toLocaleString()}
                     )}
                   </AnimatePresence>
 
-                  {/* Enhanced Chat Response */}
+                  {/* Professional AI Analysis Section */}
                   {chatResponse && (
                   <motion.div 
-                    className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl shadow-lg p-6 mb-6 border border-blue-200 dark:border-blue-700"
+                    className="card-elevated bg-gradient-to-br from-primary-50/50 via-white to-secondary-50/50 dark:from-navy-800 dark:via-navy-800/90 dark:to-navy-700 p-8 mb-8 border-2 border-primary-200 dark:border-gold-500/30"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-gold-500/20 dark:to-gold-600/20 rounded-2xl flex items-center justify-center shadow-soft">
+                        <Sparkles className="w-7 h-7 text-primary-600 dark:text-gold-400" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-neutral-800 dark:text-white">AI Career Analysis</h3>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400">Professional Insights</p>
+                        <h3 className="text-2xl font-bold gradient-text-primary">AI Career Analysis</h3>
+                        <p className="text-neutral-600 dark:text-neutral-300 font-semibold">Professional Career Insights & Recommendations</p>
                       </div>
                     </div>
 
-                    <div className="prose prose-blue dark:prose-invert max-w-none">
-                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
-                        <div className="whitespace-pre-wrap text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                          {formatExplanation(chatResponse.response)}
-                        </div>
+                    <div className="bg-white/80 dark:bg-navy-900/50 rounded-2xl p-6 shadow-soft border border-primary-200/50 dark:border-gold-500/20 backdrop-blur-sm">
+                      <div className="whitespace-pre-wrap text-neutral-800 dark:text-neutral-200 leading-relaxed text-lg font-medium">
+                        {formatExplanation(chatResponse.response)}
                       </div>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
-                      <span>Generated at: {new Date(chatResponse.timestamp).toLocaleString()}</span>
-                      <span>Analysis Complete</span>
+                    <div className="mt-6 flex items-center justify-between text-sm text-neutral-600 dark:text-neutral-400 font-medium">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+                        <span>Generated: {new Date(chatResponse.timestamp).toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="badge-success">Analysis Complete</span>
+                      </div>
                     </div>
                   </motion.div>
                 )}

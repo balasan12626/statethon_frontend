@@ -15,6 +15,7 @@ import {
 interface NCOMatch {
   title: string;
   score: number;
+  id?: string;
   metadata: {
     description?: string;
     division?: string;
@@ -22,8 +23,13 @@ interface NCOMatch {
     family_title?: string;
     group?: string;
     nco_code?: string;
+    ncoCode?: string;
+    code?: string;
     sub_division?: string;
     title?: string;
+    occupationTitle?: string;
+    jobDescription?: string;
+    summary?: string;
   };
 }
 
@@ -137,9 +143,27 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
     return { label: 'Good Match', emoji: '✅' }; // For 75% case
   };
 
-  const getNCOCode = () => match.metadata?.nco_code || 'Unknown';
-  const getJobTitle = () => match.metadata?.title || match.title || 'Unknown';
-  const getJobDescription = () => match.metadata?.description || 'No description available';
+  const getNCOCode = () => {
+    return match.metadata?.nco_code || 
+           match.metadata?.ncoCode ||
+           match.metadata?.code ||
+           match.id ||
+           'Unknown';
+  };
+
+  const getJobTitle = () => {
+    return match.metadata?.title || 
+           match.metadata?.occupationTitle ||
+           match.title || 
+           'Unknown';
+  };
+
+  const getJobDescription = () => {
+    return match.metadata?.description || 
+           match.metadata?.jobDescription ||
+           match.metadata?.summary ||
+           'No description available';
+  };
 
   const mockJobData = {
     growthRate: 12.5,
@@ -157,20 +181,61 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
 
   return (
     <motion.div 
-      className="bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:from-neutral-800 dark:via-neutral-800 dark:to-neutral-900 rounded-3xl shadow-hard border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+      className="relative bg-white rounded-xl shadow-lg overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      whileHover={{ y: -5 }}
     >
-      {/* Header with Score and Actions */}
-      <div className="relative p-8 bg-gradient-to-r from-primary-50 via-secondary-50 to-accent-50 dark:from-primary-900/20 dark:via-secondary-900/20 dark:to-accent-900/20">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-3xl"></div>
+      {/* Government Header Bar */}
+      <div className="bg-[#003366] text-white px-8 py-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <img 
+              src="/emblem.png" 
+              alt="Government of India Emblem" 
+              className="h-16 w-auto govt-emblem"
+            />
+            <div>
+              <h1 className="text-3xl font-bold font-roboto mb-2">
+                {getJobTitle()}
+              </h1>
+              <div className="flex items-center gap-3 text-white/90">
+                <span className="font-medium">NCO {getNCOCode()}</span>
+                <span className="text-white/60">|</span>
+                <span className="font-medium">Ministry of Statistics and Programme Implementation</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <motion.button 
+              onClick={onDownload}
+              className="flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Export Report
+            </motion.button>
+            <motion.button
+              onClick={onShare}
+              className="flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Share2 className="w-5 h-5 mr-2" />
+              Share
+            </motion.button>
+          </div>
+        </div>
+      </div>
+      {/* Professional Header with Score and Actions */}
+      <div className="relative p-10 bg-gradient-to-r from-primary-100/50 via-white/80 to-secondary-100/50 dark:from-navy-800/50 dark:via-navy-700/80 dark:to-gold-500/10">
+        {/* Professional Background Pattern */}
+        <div className="absolute inset-0 opacity-5 dark:opacity-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 dark:from-gold-500 dark:to-navy-600"></div>
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '30px 30px'
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23003366' fill-opacity='0.2'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '25px 25px'
           }}></div>
         </div>
 
@@ -180,53 +245,53 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
             <div className="flex items-center gap-4 mb-4">
               <motion.div 
                 onClick={handleCopy}
-                className={`bg-gradient-to-r ${getScoreColor(match.score)} text-white px-6 py-3 rounded-2xl font-bold text-xl shadow-medium hover:shadow-lg transition-all duration-200 cursor-pointer border-2 border-white/20 hover:border-white/40 ${showCopyFeedback ? 'copy-feedback' : ''}`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className={`bg-gradient-to-r ${getScoreColor(match.score)} text-white dark:text-navy-900 px-8 py-4 rounded-2xl font-bold text-xl shadow-hard hover:shadow-xl transition-all duration-200 cursor-pointer border-2 border-white/30 dark:border-navy-900/20 hover:border-white/50 dark:hover:border-navy-900/30 ${showCopyFeedback ? 'copy-feedback' : ''}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 title="Click to copy NCO code"
               >
                 <div className="text-center">
-                  <div>NCO {getNCOCode()}</div>
-                  <div className="text-xs font-normal opacity-90">Primary Education</div>
+                  <div className="text-2xl font-black">NCO {getNCOCode()}</div>
+                  <div className="text-sm font-semibold opacity-90">Government Classification</div>
                 </div>
               </motion.div>
               
               <motion.button
                 onClick={handleCopy}
-                className="p-3 rounded-xl bg-white/20 dark:bg-black/20 hover:bg-white/50 dark:hover:bg-black/40 transition-colors border border-white/30 dark:border-black/30"
+                className="p-4 rounded-xl bg-white/30 dark:bg-navy-900/30 hover:bg-white/60 dark:hover:bg-navy-900/50 transition-all duration-200 border-2 border-white/40 dark:border-gold-500/20 shadow-soft hover:shadow-medium"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title="Copy NCO Code"
               >
                 {copied ? (
-                  <Check className="w-5 h-5 text-success-600 dark:text-success-400" />
+                  <Check className="w-6 h-6 text-success-600 dark:text-success-400" />
                 ) : (
-                  <Copy className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+                  <Copy className="w-6 h-6 text-primary-600 dark:text-gold-400" />
                 )}
               </motion.button>
 
               <motion.button
                 onClick={() => setIsBookmarked(!isBookmarked)}
-                className="p-3 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 transition-colors"
+                className="p-4 rounded-xl bg-white/30 dark:bg-navy-900/30 hover:bg-white/60 dark:hover:bg-navy-900/50 transition-all duration-200 border-2 border-white/40 dark:border-gold-500/20 shadow-soft hover:shadow-medium"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Bookmark className={`w-5 h-5 ${isBookmarked ? 'text-warning-500 fill-current' : 'text-neutral-600 dark:text-neutral-400'}`} />
+                <Bookmark className={`w-6 h-6 ${isBookmarked ? 'text-warning-500 fill-current' : 'text-primary-600 dark:text-gold-400'}`} />
               </motion.button>
             </div>
 
-            <h2 className="text-3xl font-bold text-heading-contrast mb-2">
+            <h2 className="text-4xl font-bold gradient-text-primary mb-4 text-shadow-md">
               {getJobTitle()}
             </h2>
             
-            <div className="flex items-center gap-3 mb-4">
-              <span className="bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300 px-3 py-1 rounded-full text-sm font-medium">
-                Professional
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <span className="badge-success text-base font-bold px-4 py-2">
+                ✅ Professional Grade
               </span>
-              <span className="bg-secondary-100 dark:bg-secondary-900/30 text-secondary-800 dark:text-secondary-300 px-3 py-1 rounded-full text-sm font-medium">
-                High Demand
+              <span className="badge-secondary text-base font-bold px-4 py-2">
+                🔥 High Demand
               </span>
-              <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm font-bold text-base">
+              <span className="badge-primary text-base font-bold px-4 py-2">
                 📈 Growth: +{mockJobData.growthRate}%
               </span>
             </div>
@@ -304,72 +369,131 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
         {/* Quick Stats Row removed as requested */}
       </div>
 
-      {/* Main Content */}
-      <div className="p-8">
-        {/* Job Description */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-3 flex items-center gap-2">
-            <span className="text-2xl">📋</span>
-            Job Description
-          </h3>
-          <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 border border-neutral-200 dark:border-neutral-700">
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              {getJobDescription()}
-            </p>
+      {/* Main Content with Government Styling */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
+        {/* Left Column - Main Content */}
+        <div className="lg:col-span-2">
+          {/* Official Job Description */}
+          <div className="bg-white rounded-xl shadow-md mb-8">
+            <div className="border-b border-gray-200 px-6 py-4">
+              <h3 className="text-xl font-roboto font-bold text-[#003366] flex items-center gap-2">
+                <span role="img" aria-label="Document">📝</span>
+                Official Job Description
+              </h3>
+            </div>
+            <div className="p-6">
+              <p className="text-[#212529] text-base font-noto leading-relaxed mb-6">
+                {getJobDescription()}
+              </p>
             
-            {/* Key Responsibilities with Icons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-              <div className="flex items-start gap-3">
-                <span className="text-xl">📚</span>
-                <div>
-                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Teaching Subjects</h4>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Reading, writing, arithmetic, language, social science, moral science, history, geography</p>
+              {/* Key Responsibilities Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+              <div className="bg-[#F8F9FA] rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-[#003366] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span role="img" aria-label="Books" className="text-xl">📚</span>
+                  </div>
+                  <div>
+                    <h4 className="font-roboto font-semibold text-[#003366] mb-2">Teaching Subjects</h4>
+                    <p className="text-[#212529] text-sm font-noto">Reading, writing, arithmetic, language, social science, ethics, history, geography</p>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <span className="text-xl">📝</span>
-                <div>
-                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Assessment & Records</h4>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Conduct tests, prepare results, maintain attendance records</p>
+              <div className="bg-[#F8F9FA] rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-[#003366] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span role="img" aria-label="Assessment" className="text-xl">📝</span>
+                  </div>
+                  <div>
+                    <h4 className="font-roboto font-semibold text-[#003366] mb-2">Assessment & Records</h4>
+                    <p className="text-[#212529] text-sm font-noto">Conduct tests, prepare results, maintain attendance records</p>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <span className="text-xl">🏆</span>
-                <div>
-                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Extracurricular Activities</h4>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Organize hobbies, sports, dramatics, and other activities</p>
+              <div className="bg-[#F8F9FA] rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-[#003366] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span role="img" aria-label="Trophy" className="text-xl">🏆</span>
+                  </div>
+                  <div>
+                    <h4 className="font-roboto font-semibold text-[#003366] mb-2">Extracurricular Activities</h4>
+                    <p className="text-[#212529] text-sm font-noto">Organize hobbies, sports, dramatics, and other activities</p>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <span className="text-xl">💰</span>
-                <div>
-                  <h4 className="font-semibold text-neutral-800 dark:text-white text-sm">Administrative Duties</h4>
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400">Collect fees, submit accounts, maintain school registers</p>
+              <div className="bg-[#F8F9FA] rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-[#003366] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span role="img" aria-label="Administrative" className="text-xl">💰</span>
+                  </div>
+                  <div>
+                    <h4 className="font-roboto font-semibold text-[#003366] mb-2">Administrative Duties</h4>
+                    <p className="text-[#212529] text-sm font-noto">Collect fees, submit accounts, maintain school registers</p>
+                  </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
 
-        {/* Match Analysis */}
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-2xl p-6 mb-6 border border-primary-200 dark:border-primary-700">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center flex-shrink-0">
-              <Target className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+        {/* Right Sidebar */}
+        <div className="lg:col-span-1">
+          {/* Classification Card */}
+          <div className="bg-[#FF9933] bg-opacity-10 rounded-xl p-6 mb-6">
+            <h3 className="font-roboto font-bold text-[#003366] text-lg mb-4 flex items-center gap-2">
+              <span role="img" aria-label="Tag">🏷️</span>
+              Classification
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[#212529] font-noto font-medium">Grade</span>
+                <span className="bg-[#003366] text-white px-3 py-1 rounded-full text-sm font-medium">Professional</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#212529] font-noto font-medium">Demand</span>
+                <span className="bg-[#FF9933] text-white px-3 py-1 rounded-full text-sm font-medium">High Growth</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#212529] font-noto font-medium">Sector</span>
+                <span className="bg-[#003366] bg-opacity-10 text-[#003366] px-3 py-1 rounded-full text-sm font-medium">Education</span>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-primary-900 dark:text-primary-300 mb-2 text-lg">
-                Why This Matches Your Description
-              </h4>
-              <p className="text-primary-800 dark:text-primary-200 leading-relaxed">
-                Your job description <span className="font-semibold bg-primary-100 dark:bg-primary-900/30 px-2 py-1 rounded">"{searchInput}"</span> perfectly aligns with this NCO code based on our advanced AI analysis. We matched your skills, responsibilities, and industry requirements using semantic analysis that considers both explicit and implicit job characteristics.
-              </p>
-              <div className="mt-3 flex items-center gap-2 text-sm text-primary-700 dark:text-primary-300">
-                <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-                <span>AI Confidence: High</span>
+          </div>
+
+          {/* Match Analysis Card */}
+          <div className="bg-white rounded-xl shadow-md">
+            <div className="border-b border-gray-200 px-6 py-4">
+              <h3 className="font-roboto font-bold text-[#003366] text-lg flex items-center gap-2">
+                <span role="img" aria-label="Target">🎯</span>
+                Match Analysis
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="mb-6">
+                <div className="text-[#212529] font-noto mb-3">
+                  Your job description:
+                </div>
+                <div className="bg-[#F8F9FA] p-3 rounded-lg text-[#003366] font-medium">
+                  "{searchInput}"
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-green-700 font-medium">AI Confidence: Excellent (95%+)</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <img 
+                  src="/verified.png" 
+                  alt="Government Verified" 
+                  className="h-5 w-auto"
+                />
+                <span className="text-[#003366] font-medium">Verified by MoSPI</span>
               </div>
             </div>
           </div>
@@ -377,51 +501,62 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
 
         {/* Overview grid removed as requested */}
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4 pt-6 border-t border-neutral-200 dark:border-neutral-700">
-          <motion.button 
-            onClick={onDownload}
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-success-600 to-accent-600 text-white rounded-2xl font-medium shadow-medium hover:shadow-hard transition-all"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export Report
-          </motion.button>
-          
-          <motion.button 
-            onClick={onShare}
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-secondary-600 to-primary-600 text-white rounded-2xl font-medium shadow-medium hover:shadow-hard transition-all group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Share2 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-            Share Result
-          </motion.button>
-          
-          <motion.button 
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-medium shadow-medium hover:shadow-hard transition-all border-2 border-blue-500/20 hover:border-blue-500/40"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            View Official NCO Details
-          </motion.button>
-          
-          <div className="ml-auto flex items-center text-neutral-500 dark:text-neutral-400 text-sm">
-            Was this helpful?
-            <motion.button 
-              className="ml-3 text-2xl hover:scale-125 transition-transform"
-              whileHover={{ rotate: 10 }}
-            >
-              👍
-            </motion.button>
-            <motion.button 
-              className="ml-2 text-2xl hover:scale-125 transition-transform"
-              whileHover={{ rotate: -10 }}
-            >
-              👎
-            </motion.button>
+        {/* Footer Actions */}
+        <div className="col-span-full bg-[#F8F9FA] border-t border-gray-200 mt-8 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <motion.button 
+                onClick={onDownload}
+                className="bg-[#003366] text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-[#002855] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Download className="w-5 h-5" />
+                Download Full Report
+              </motion.button>
+              
+              <motion.button 
+                onClick={onShare}
+                className="bg-[#FF9933] text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-[#E68A2E] transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Share2 className="w-5 h-5" />
+                Share Results
+              </motion.button>
+              
+              <motion.a 
+                href="https://www.mospi.gov.in/nco-manual"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#003366] hover:text-[#002855] font-medium flex items-center gap-2 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <ExternalLink className="w-5 h-5" />
+                View NCO Manual
+              </motion.a>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <span className="text-[#212529] font-medium">Was this helpful?</span>
+              <div className="flex gap-4">
+                <motion.button 
+                  className="text-[#003366] hover:text-[#002855] transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ThumbsUp className="w-6 h-6" />
+                </motion.button>
+                <motion.button 
+                  className="text-[#003366] hover:text-[#002855] transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ThumbsDown className="w-6 h-6" />
+                </motion.button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

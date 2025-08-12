@@ -13,51 +13,44 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <nav className="navbar">
+      <div className="container-responsive">
+        <div className="flex justify-between h-20">
           {/* Logo and Navigation Links */}
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <Link to="/" className="flex-shrink-0 flex items-center group">
               <img
-                className="h-8 w-auto"
+                className="h-10 w-auto transition-transform duration-200 group-hover:scale-105 govt-emblem"
                 src="/logo.svg"
-                alt="Logo"
+                alt="Government of India Logo"
               />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-                NCO Search
-              </span>
+              <div className="ml-4">
+                <span className="text-2xl font-bold gradient-text-primary">
+                  NCO Search
+                </span>
+                <div className="text-xs text-neutral-600 dark:text-neutral-400 font-medium">
+                  Government of India
+                </div>
+              </div>
             </Link>
             
             {/* Desktop Navigation */}
-            <div className="hidden md:ml-6 md:flex md:space-x-8">
+            <div className="hidden lg:ml-12 lg:flex lg:space-x-2">
               <Link
                 to="/"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  isActive('/')
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
-                }`}
+                className={`navbar-link ${isActive('/') ? 'active' : ''}`}
               >
                 Home
               </Link>
               <Link
                 to="/about"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  isActive('/about')
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
-                }`}
+                className={`navbar-link ${isActive('/about') ? 'active' : ''}`}
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  isActive('/contact')
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
-                }`}
+                className={`navbar-link ${isActive('/contact') ? 'active' : ''}`}
               >
                 Contact
               </Link>
@@ -65,16 +58,18 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Right side controls */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {/* Language Switcher */}
             <ErrorBoundary>
-              <LanguageSwitcher />
+              <div className="hidden sm:block">
+                <LanguageSwitcher />
+              </div>
             </ErrorBoundary>
 
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-3 rounded-xl text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-gold-400 hover:bg-primary-50 dark:hover:bg-navy-800 transition-all duration-200 shadow-soft hover:shadow-medium"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
@@ -87,7 +82,7 @@ const Navbar: React.FC = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="lg:hidden p-3 rounded-xl text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-gold-400 hover:bg-primary-50 dark:hover:bg-navy-800 transition-all duration-200 shadow-soft hover:shadow-medium"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -102,41 +97,50 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <Link
-              to="/"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/')
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/about')
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/contact')
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact
-            </Link>
+        <div className="lg:hidden animate-slide-down">
+          <div className="container-responsive">
+            <div className="py-6 space-y-2 bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl border-t border-neutral-200 dark:border-navy-700 rounded-b-2xl shadow-hard">
+              <Link
+                to="/"
+                className={`block px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 ${
+                  isActive('/')
+                    ? 'bg-primary-100 dark:bg-gold-100/20 text-primary-700 dark:text-gold-300 shadow-soft'
+                    : 'text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-navy-800 hover:text-primary-600 dark:hover:text-gold-400'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                🏠 Home
+              </Link>
+              <Link
+                to="/about"
+                className={`block px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 ${
+                  isActive('/about')
+                    ? 'bg-primary-100 dark:bg-gold-100/20 text-primary-700 dark:text-gold-300 shadow-soft'
+                    : 'text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-navy-800 hover:text-primary-600 dark:hover:text-gold-400'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                ℹ️ About
+              </Link>
+              <Link
+                to="/contact"
+                className={`block px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 ${
+                  isActive('/contact')
+                    ? 'bg-primary-100 dark:bg-gold-100/20 text-primary-700 dark:text-gold-300 shadow-soft'
+                    : 'text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-navy-800 hover:text-primary-600 dark:hover:text-gold-400'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                📞 Contact
+              </Link>
+              
+              {/* Mobile Language Switcher */}
+              <div className="pt-4 border-t border-neutral-200 dark:border-navy-700">
+                <ErrorBoundary>
+                  <LanguageSwitcher />
+                </ErrorBoundary>
+              </div>
+            </div>
           </div>
         </div>
       )}
