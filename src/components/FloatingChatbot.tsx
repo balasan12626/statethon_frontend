@@ -257,7 +257,7 @@ const FloatingChatbot: React.FC = () => {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Ask about NCO Code 2015..."
-                    className="w-full px-6 py-4 bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-navy-800 dark:via-navy-800 dark:to-navy-900 border-2 border-neutral-300/60 dark:border-navy-600/60 rounded-2xl focus:border-primary-500 dark:focus:border-gold-500 focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-gold-100/20 transition-all duration-300 placeholder-neutral-500 dark:placeholder-neutral-400 font-medium shadow-md"
+                    className="w-full px-6 py-4 text-neutral-900 dark:text-white bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-navy-800 dark:via-navy-800 dark:to-navy-900 border-2 border-neutral-300/60 dark:border-navy-600/60 rounded-2xl focus:border-primary-500 dark:focus:border-gold-500 focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-gold-100/20 transition-all duration-300 placeholder-neutral-500 dark:placeholder-neutral-400 font-medium shadow-md"
                     disabled={isLoading}
                   />
                 </div>

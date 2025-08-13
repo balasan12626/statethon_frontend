@@ -112,35 +112,14 @@ const Home = () => {
 
   // Helper functions
   const formatMatchScore = (score: number) => {
-    // Ensure all scores are above 75% and add 10-15 percentage points to compress the range
-    let baseScore = score;
-    if (score < 0.2) {
-      baseScore = Math.round(score * 1000) / 10 / 100; // Convert back to 0-1 range
-    } else {
-      baseScore = score;
-    }
-    
-    // Transform the score to ensure minimum 75% and compress the range
-    // Add 10-15 percentage points and ensure minimum of 75%
-    const transformedScore = Math.max(0.75, baseScore + 0.12); // Add 12% and ensure minimum 75%
-    
-    // For very low original scores, give them a boost to reach 80-85% range
-    if (score < 0.3) {
-      return Math.round(Math.max(80, transformedScore * 100));
-    }
-    
-    // For medium scores, boost them to 85-90% range
-    if (score < 0.6) {
-      return Math.round(Math.max(85, transformedScore * 100));
-    }
-    
-    // For high scores, boost them to 90-95% range
-    if (score < 0.8) {
-      return Math.round(Math.max(90, transformedScore * 100));
-    }
-    
-    // For very high scores, cap at 95-98%
-    return Math.round(Math.min(98, Math.max(95, transformedScore * 100)));
+    // Use actual backend percentage instead of transformed range
+    const getActualPercentage = (score: number): number => {
+      // Convert backend score (0-1) to actual percentage (0-100)
+      const actualPercentage = Math.round(score * 100);
+      return Math.max(0, Math.min(100, actualPercentage)); // Ensure it's between 0-100
+    };
+
+    return getActualPercentage(score);
   };
 
 
@@ -158,19 +137,44 @@ const Home = () => {
     explanation?: string; // markdown-like text
     matches?: MultiAgentMatch[];
   }
+  
+  // Type for when backend returns array directly
+  type BackendResponse = MultiAgentResponse | MultiAgentMatch[];
 
   // Transform backend response → UI SearchResponse
   const transformMultiAgentToSearchResponse = (
     inputText: string,
-    api: MultiAgentResponse
+    api: BackendResponse
   ): SearchResponse | null => {
-    if (!api || !api.matches || api.matches.length === 0) return null;
+    // Handle different backend response formats
+    let matches: MultiAgentMatch[] = [];
+    
+    // If api is directly an array (as shown in Postman), treat it as matches
+    if (Array.isArray(api)) {
+      matches = api as MultiAgentMatch[];
+    }
+    // If api has matches property, use that
+    else if (api.matches && Array.isArray(api.matches)) {
+      matches = api.matches;
+    }
+    // If api is an object with matches property but it's undefined, try to handle it
+    else if (api && typeof api === 'object' && 'matches' in api) {
+      matches = [];
+    }
+    
+    if (!matches || matches.length === 0) return null;
+    
+    // Debug: Log the raw backend response
+    console.log('🔍 Raw Backend Response:', api);
+    console.log('🔍 Backend Matches:', matches);
     
     // Sort all matches by score (highest first)
-    const sortedMatches = [...api.matches].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    const sortedMatches = [...matches].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
     
     // Get the top match for backward compatibility
     const top = sortedMatches[0];
+    console.log('🔍 Top Match from Backend:', top);
+    
     const topMatch: NCOMatch = {
       title: top.title || 'Unknown',
       score: typeof top.score === 'number' ? top.score : 0,
@@ -181,18 +185,26 @@ const Home = () => {
       }
     };
 
-    // Transform all matches for display
-    const allMatches: NCOMatch[] = sortedMatches.map(match => ({
-      title: match.title || 'Unknown',
-      score: typeof match.score === 'number' ? match.score : 0,
-      metadata: {
-        nco_code: match.nco_code || String(match.id || ''),
-        title: match.title || 'Unknown',
-        description: match.description || 'No description available'
-      }
-    }));
+    console.log('🔍 Transformed Top Match:', topMatch);
+    console.log('🔍 Top Match Description:', topMatch.metadata.description);
 
-    return {
+    // Transform all matches for display
+    const allMatches: NCOMatch[] = sortedMatches.map((match, index) => {
+      const transformedMatch = {
+        title: match.title || 'Unknown',
+        score: typeof match.score === 'number' ? match.score : 0,
+        metadata: {
+          nco_code: match.nco_code || String(match.id || ''),
+          title: match.title || 'Unknown',
+          description: match.description || 'No description available'
+        }
+      };
+      
+      console.log(`🔍 Match ${index + 1} Description:`, transformedMatch.metadata.description);
+      return transformedMatch;
+    });
+
+    const result = {
       success: true,
       data: {
         success: true,
@@ -201,6 +213,9 @@ const Home = () => {
         allMatches // Include all matches for display
       }
     };
+
+    console.log('🔍 Final Transformed Result:', result);
+    return result;
   };
 
   // Prefer whichever backend worked last during this session
@@ -221,7 +236,7 @@ const Home = () => {
     return endpoints;
   }, []);
 
-  const requestMultiAgent = async (payload: { query: string; top_k: number }): Promise<MultiAgentResponse> => {
+  const requestMultiAgent = async (payload: { query: string; top_k: number }): Promise<BackendResponse> => {
     const endpoints = preferredEndpointRef.current
       ? [preferredEndpointRef.current, ...BACKEND_ENDPOINTS.filter(u => u !== preferredEndpointRef.current)]
       : BACKEND_ENDPOINTS;
@@ -397,6 +412,15 @@ const Home = () => {
       // Transform into UI structure
       const data = transformMultiAgentToSearchResponse(jobDescription.trim(), multiAgent);
 
+             // Debug: Log the backend response and transformed data
+       console.log('🚀 Backend Response Debug:', {
+         originalResponse: multiAgent,
+         transformedData: data,
+         topMatch: data?.data?.topMatch,
+         topMatchMetadata: data?.data?.topMatch?.metadata,
+         topMatchDescription: data?.data?.topMatch?.metadata?.description
+       });
+
       if (data && data.success && data.data && data.data.topMatch) {
         // Check if we have meaningful data - look for title in multiple places
         const actualTitle = data.data.topMatch.metadata?.title || 
@@ -425,18 +449,19 @@ const Home = () => {
           // Generate share URL
           generateShareUrl(data);
 
-          // Use backend-provided explanation as AI analysis (if present)
-          if (multiAgent && multiAgent.explanation) {
-            setChatResponse({
-              success: true,
-              response: multiAgent.explanation,
-              model: 'multiagent',
-              timestamp: new Date().toISOString(),
-              usage: { model: 'multiagent', timestamp: new Date().toISOString() }
-            });
-          } else {
-            setChatResponse(null);
-          }
+                     // Use backend-provided explanation as AI analysis (if present)
+           const explanation = 'explanation' in multiAgent ? multiAgent.explanation : undefined;
+           if (explanation) {
+             setChatResponse({
+               success: true,
+               response: explanation,
+               model: 'multiagent',
+               timestamp: new Date().toISOString(),
+               usage: { model: 'multiagent', timestamp: new Date().toISOString() }
+             });
+           } else {
+             setChatResponse(null);
+           }
         } else {
           console.log('Debug - No suitable match found. actualTitle:', actualTitle, 'ncoCode:', ncoCode);
           setError('No suitable NCO matches found for your job description. Please try a different description.');
@@ -847,14 +872,48 @@ Generated on: ${new Date().toLocaleString()}
                   )}
 
 
-                  {/* Enhanced AI Analysis Loading */}
-                  <AnimatePresence>
-                    {isChatLoading && (
-                      <motion.div className="mt-8">
-                        <ChatLoadingState />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                                     {/* Enhanced AI Analysis Loading */}
+                   <AnimatePresence>
+                     {isChatLoading && (
+                       <motion.div className="mt-8">
+                         <ChatLoadingState />
+                       </motion.div>
+                     )}
+                   </AnimatePresence>
+
+                   {/* Debug Section - Show raw backend data */}
+                   {searchResult && (
+                     <motion.div 
+                       className="mt-8 p-6 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-300 dark:border-yellow-600 rounded-2xl"
+                       initial={{ opacity: 0, y: 20 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       transition={{ duration: 0.5 }}
+                     >
+                       <h3 className="text-lg font-bold text-yellow-800 dark:text-yellow-200 mb-4">
+                         🔍 Debug: Backend Data Flow
+                       </h3>
+                       <div className="space-y-3 text-sm">
+                         <div>
+                           <strong>Job Title:</strong> {getJobTitle(searchResult.data.topMatch)}
+                         </div>
+                         <div>
+                           <strong>NCO Code:</strong> {getNCOCode(searchResult.data.topMatch.metadata)}
+                         </div>
+                         <div>
+                           <strong>Description Available:</strong> {searchResult.data.topMatch.metadata?.description ? '✅ Yes' : '❌ No'}
+                         </div>
+                         <div>
+                           <strong>Description Length:</strong> {searchResult.data.topMatch.metadata?.description?.length || 0} characters
+                         </div>
+                         <div>
+                           <strong>Description Preview:</strong> 
+                           <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg text-xs max-h-32 overflow-y-auto">
+                             {searchResult.data.topMatch.metadata?.description?.substring(0, 200) || 'No description available'}...
+                           </div>
+                         </div>
+                       </div>
+                     </motion.div>
+                   )}
 
                   {/* Professional AI Analysis Section */}
                   {chatResponse && (

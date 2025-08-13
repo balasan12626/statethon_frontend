@@ -107,52 +107,35 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
 
   // Helper functions
   const formatMatchScore = (score: number) => {
-    // Ensure all scores are above 75% and add 10-15 percentage points to compress the range
-    let baseScore = score;
-    if (score < 0.2) {
-      baseScore = Math.round(score * 1000) / 10 / 100; // Convert back to 0-1 range
-    } else {
-      baseScore = score;
-    }
-    
-    // Transform the score to ensure minimum 75% and compress the range
-    // Add 10-15 percentage points and ensure minimum of 75%
-    const transformedScore = Math.max(0.75, baseScore + 0.12); // Add 12% and ensure minimum 75%
-    
-    // For very low original scores, give them a boost to reach 80-85% range
-    if (score < 0.3) {
-      return Math.round(Math.max(80, transformedScore * 100));
-    }
-    
-    // For medium scores, boost them to 85-90% range
-    if (score < 0.6) {
-      return Math.round(Math.max(85, transformedScore * 100));
-    }
-    
-    // For high scores, boost them to 90-95% range
-    if (score < 0.8) {
-      return Math.round(Math.max(90, transformedScore * 100));
-    }
-    
-    // For very high scores, cap at 95-98%
-    return Math.round(Math.min(98, Math.max(95, transformedScore * 100)));
+    // Use actual backend percentage instead of transformed range
+    const getActualPercentage = (score: number): number => {
+      // Convert backend score (0-1) to actual percentage (0-100)
+      const actualPercentage = Math.round(score * 100);
+      return Math.max(0, Math.min(100, actualPercentage)); // Ensure it's between 0-100
+    };
+
+    return getActualPercentage(score);
   };
 
   const getScoreColor = (score: number) => {
-    // Updated thresholds for the new compressed score range (75%+)
-    if (score >= 0.9) return 'from-success-500 to-success-600';
-    if (score >= 0.8) return 'from-success-400 to-success-500';
-    if (score >= 0.75) return 'from-warning-500 to-warning-600';
-    return 'from-error-500 to-error-600';
+    // Updated thresholds for actual percentage with blue theme
+    // Using solid colors instead of blur colors
+    if (score >= 0.9) return '#2563eb'; // blue-600
+    if (score >= 0.8) return '#3b82f6'; // blue-500
+    if (score >= 0.7) return '#60a5fa'; // blue-400
+    if (score >= 0.6) return '#93c5fd'; // blue-300
+    if (score >= 0.5) return '#bfdbfe'; // blue-200
+    return '#dbeafe'; // blue-100
   };
 
   const getScoreLabel = (score: number) => {
-    // Updated labels for the new compressed score range (75%+)
-    if (score >= 0.95) return 'Excellent Match';
-    if (score >= 0.9) return 'Strong Match';
-    if (score >= 0.85) return 'Good Match';
-    if (score >= 0.8) return 'Fair Match';
-    return 'Weak Match';
+    // Updated labels for actual percentage with blue theme
+    if (score >= 0.9) return 'Excellent Match';
+    if (score >= 0.8) return 'Strong Match';
+    if (score >= 0.7) return 'Good Match';
+    if (score >= 0.6) return 'Fair Match';
+    if (score >= 0.5) return 'Weak Match';
+    return 'Poor Match';
   };
 
   const getNCOCode = () => {
@@ -163,13 +146,29 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
     return match.metadata.occupationTitle || match.metadata.title || match.title;
   };
 
-  // Mock job data for demonstration
+  // Get job description from backend data
+  const getJobDescription = () => {
+    const description = match.metadata?.description || 
+                       match.metadata?.jobDescription || 
+                       match.metadata?.summary || 
+                       'No description available';
+    
+    // Debug: Log the description data
+    console.log('Job Description Debug:', {
+      metadata: match.metadata,
+      description: description,
+      hasDescription: !!match.metadata?.description
+    });
+    
+    return description;
+  };
+
+  // Mock job data for demonstration (fallback data)
   const mockJobData = {
     growthRate: 12.5,
     demandLevel: 'High',
     sector: 'Education',
     grade: 'Professional',
-    description: `Primary School Teachers are responsible for educating children in primary grades (typically ages 6-12). They teach fundamental subjects including reading, writing, arithmetic, language arts, social studies, science, and physical education. Teachers develop lesson plans, assess student progress, maintain classroom discipline, and communicate with parents about student development. They also participate in school activities, staff meetings, and professional development programs.`,
     subjects: ['Reading', 'Writing', 'Arithmetic', 'Language Arts', 'Social Studies', 'Science', 'Physical Education'],
     assessments: ['Conduct regular tests and examinations', 'Prepare progress reports', 'Maintain attendance records', 'Evaluate student performance'],
     extracurricular: ['Organize school events', 'Supervise student clubs', 'Participate in parent-teacher meetings', 'Attend professional development workshops'],
@@ -343,19 +342,22 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
                       cx="50"
                       cy="50"
                       r="45"
-                      stroke="currentColor"
+                      stroke={getScoreColor(match.score)}
                       strokeWidth="8"
                       fill="none"
                       strokeLinecap="round"
                       strokeDasharray={`${progressAnimation * 2.83} 283`}
-                      className={`transition-all duration-2000 ${getScoreColor(match.score).replace('from-', 'text-').replace(' to-', '')}`}
+                      className="transition-all duration-2000"
+                      style={{
+                        filter: `drop-shadow(0 0 4px ${getScoreColor(match.score)}40)`
+                      }}
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-2xl lg:text-3xl font-bold gradient-text-primary">
+                    <div className="text-2xl lg:text-3xl font-bold text-blue-700 dark:text-blue-300">
                       {displayValue}%
                     </div>
-                    <div className="text-sm lg:text-base font-medium text-neutral-600 dark:text-neutral-400 text-center">
+                    <div className="text-sm lg:text-base font-medium text-blue-600 dark:text-blue-400 text-center">
                       {getScoreLabel(match.score)}
                     </div>
                   </div>
@@ -363,9 +365,9 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
               </div>
               
               {/* AI Confidence Indicator */}
-              <div className="flex items-center gap-2 bg-primary-50 dark:bg-primary-900/20 px-4 py-2 rounded-xl border border-primary-200 dark:border-primary-700">
-                <Target className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-                <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+              <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-xl border border-blue-200 dark:border-blue-700">
+                <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
                   AI Confidence: {displayValue >= 95 ? 'Excellent' : displayValue >= 90 ? 'Very Good' : displayValue >= 85 ? 'Good' : displayValue >= 80 ? 'Fair' : 'Good'} ({displayValue}%+)
                 </span>
               </div>
@@ -381,10 +383,19 @@ const EnhancedResultCard: React.FC<EnhancedResultCardProps> = ({
               <FileText className="w-6 h-6 text-primary-600 dark:text-gold-400" />
               Official Job Description
             </h3>
-            <div className="bg-neutral-50 dark:bg-navy-700/50 rounded-2xl p-6 border border-neutral-200 dark:border-navy-600">
-              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                {mockJobData.description}
-              </p>
+            <div className="bg-gradient-to-br from-neutral-50 via-white to-primary-50/30 dark:from-navy-700/50 dark:via-navy-700 dark:to-gold-500/10 rounded-2xl p-8 border-2 border-neutral-200 dark:border-navy-600 shadow-lg">
+              <div className="prose prose-lg max-w-none">
+                <p className="text-neutral-800 dark:text-neutral-200 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+                  {getJobDescription()}
+                </p>
+              </div>
+              {!match.metadata?.description && (
+                <div className="mt-4 p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-700 rounded-xl">
+                  <p className="text-warning-700 dark:text-warning-300 text-sm">
+                    ⚠️ Note: This is a fallback description. The actual job description from the backend will be displayed when available.
+                  </p>
+                </div>
+              )}
             </div>
           </section>
 

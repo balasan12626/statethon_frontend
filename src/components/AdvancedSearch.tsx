@@ -128,7 +128,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               onFocus={() => setShowSuggestions(value.length > 0)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder={t('home.describeJob') || "Describe your job or profession..."}
-              className="w-full pl-16 pr-40 py-6 lg:py-7 text-xl bg-gradient-to-br from-white via-white to-neutral-50 dark:from-navy-800 dark:via-navy-800 dark:to-navy-900 border-2 border-neutral-300/60 dark:border-navy-600/60 rounded-3xl shadow-xl focus:border-primary-500 dark:focus:border-gold-400 focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-gold-400/20 transition-all duration-300 placeholder-neutral-500 dark:placeholder-neutral-400 font-medium"
+              className="w-full pl-16 pr-40 py-6 lg:py-7 text-xl text-neutral-900 dark:text-white bg-gradient-to-br from-white via-white to-neutral-50 dark:from-navy-800 dark:via-navy-800 dark:to-navy-900 border-2 border-neutral-300/60 dark:border-navy-600/60 rounded-3xl shadow-xl focus:border-primary-500 dark:focus:border-gold-400 focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-gold-400/20 transition-all duration-300 placeholder-neutral-500 dark:placeholder-neutral-400 font-medium"
             />
 
             {/* Action Buttons */}
