@@ -33,7 +33,7 @@ export const getInitialMessages = (): ChatMessage[] => [
   {
     id: 'bot-welcome-msg',
     from: 'bot',
-    text: 'Hi! I\'m your NCO Career Assistant. Ask me anything about NCO Code 2015 and related career information.',
+    text: 'Hello! 👋 I\'m your AI-powered NCO Career Assistant. I can help you with:\n\n• Finding NCO codes for specific jobs\n• Understanding career classifications\n• Exploring job opportunities\n• Career guidance and advice\n\nWhat would you like to know about NCO Code 2015?',
     timestamp: new Date()
   }
 ]; 

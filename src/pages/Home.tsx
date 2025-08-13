@@ -641,7 +641,7 @@ Generated on: ${new Date().toLocaleString()}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <motion.h3 
-                className="text-xl font-semibold text-neutral-700 dark:text-neutral-300 mb-6 flex items-center justify-center gap-3"
+                className="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mb-8 flex items-center justify-center gap-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
@@ -650,38 +650,38 @@ Generated on: ${new Date().toLocaleString()}
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Sparkles className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  <Sparkles className="w-8 h-8 text-primary-600 dark:text-primary-400" />
                 </motion.div>
-                Try these examples:
+                <span className="gradient-text-primary">Try these examples:</span>
               </motion.h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {examples.map((example, index) => (
                   <motion.div
                     key={index}
                     onClick={() => setJobDescription(example.text)}
-                    className="group card-hover p-8 relative overflow-hidden border-2 hover:border-primary-300 dark:hover:border-gold-500/50"
-                    whileHover={{ scale: 1.02, y: -8 }}
+                    className="group card-hover p-8 relative overflow-hidden border-2 hover:border-primary-300 dark:hover:border-gold-500/50 rounded-3xl shadow-lg hover:shadow-xl"
+                    whileHover={{ scale: 1.03, y: -12 }}
                     whileTap={{ scale: 0.98 }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
                   >
-                    {/* Professional hover gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white/30 to-secondary-50/50 dark:from-gold-500/5 dark:via-navy-800/50 dark:to-navy-700/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Enhanced hover gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white/40 to-secondary-50/60 dark:from-gold-500/10 dark:via-navy-800/60 dark:to-navy-700/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
-                    <div className="relative flex items-start gap-4">
+                    <div className="relative flex items-start gap-6">
                       <motion.span 
-                        className="text-3xl flex-shrink-0"
-                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        className="text-4xl flex-shrink-0"
+                        whileHover={{ scale: 1.3, rotate: 10 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         {example.icon}
                       </motion.span>
                       <div className="flex-1">
-                        <p className="text-neutral-800 dark:text-neutral-200 mb-4 group-hover:text-primary-700 dark:group-hover:text-gold-300 transition-colors font-semibold leading-relaxed text-lg">
+                        <p className="text-neutral-800 dark:text-neutral-200 mb-6 group-hover:text-primary-700 dark:group-hover:text-gold-300 transition-colors font-bold leading-relaxed text-xl">
                           "{example.text}"
                         </p>
-                        <span className="badge-primary text-sm font-semibold">
+                        <span className="badge-primary text-sm font-bold px-4 py-2 rounded-full">
                           {example.category}
                         </span>
                       </div>
@@ -754,37 +754,37 @@ Generated on: ${new Date().toLocaleString()}
                 >
                   {/* Enhanced Results Header */}
                   <motion.div 
-                    className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
+                    className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <div>
-                      <h3 className="text-3xl font-bold gradient-text-primary mb-3">
+                      <h3 className="text-4xl font-bold gradient-text-primary mb-4 tracking-tight">
                         🎯 Your Perfect NCO Match
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-lg font-medium">
+                      <p className="text-xl text-neutral-600 dark:text-neutral-300 font-semibold">
                         Professional AI-powered analysis • Completed in 0.23 seconds
                       </p>
                     </div>
                     <div className="flex gap-4">
                       <motion.button 
                         onClick={downloadPDF}
-                        className="btn-primary flex items-center"
-                        whileHover={{ scale: 1.02 }}
+                        className="btn-primary flex items-center px-8 py-4 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl"
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <Download className="w-5 h-5 mr-3" />
+                        <Download className="w-6 h-6 mr-3" />
                         Export Report
                       </motion.button>
                       {isMobile && (
                         <motion.button
                           onClick={() => setShowMobileShare(true)}
-                          className="btn-secondary flex items-center"
-                          whileHover={{ scale: 1.02 }}
+                          className="btn-secondary flex items-center px-8 py-4 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl"
+                          whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Share2 className="w-5 h-5 mr-3" />
+                          <Share2 className="w-6 h-6 mr-3" />
                           Share Results
                         </motion.button>
                       )}

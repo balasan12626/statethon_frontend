@@ -818,6 +818,15 @@ body {
     max-width: var(--content-max-width);
   }
 
+  /* Enhanced Shadow Utilities */
+  .shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .shadow-3xl {
+    box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
   .section-spacing {
     @apply py-16 lg:py-24;
   }

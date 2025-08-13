@@ -112,8 +112,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         <div className="relative">
           <div className="relative flex items-center">
             {/* Search Icon */}
-            <div className="absolute left-4 z-10">
-              <Search className="w-5 h-5 text-neutral-400" />
+            <div className="absolute left-6 z-10">
+              <Search className="w-6 h-6 text-neutral-500 dark:text-neutral-400" />
             </div>
 
             {/* Main Input */}
@@ -128,46 +128,46 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               onFocus={() => setShowSuggestions(value.length > 0)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder={t('home.describeJob') || "Describe your job or profession..."}
-              className="w-full pl-12 pr-32 py-4 lg:py-5 text-lg bg-white dark:bg-navy-800 border-2 border-neutral-200 dark:border-navy-600 rounded-2xl shadow-lg focus:border-primary-500 dark:focus:border-gold-400 focus:ring-4 focus:ring-primary-100 dark:focus:ring-gold-400/20 transition-all duration-200 placeholder-neutral-400 dark:placeholder-neutral-500"
+              className="w-full pl-16 pr-40 py-6 lg:py-7 text-xl bg-gradient-to-br from-white via-white to-neutral-50 dark:from-navy-800 dark:via-navy-800 dark:to-navy-900 border-2 border-neutral-300/60 dark:border-navy-600/60 rounded-3xl shadow-xl focus:border-primary-500 dark:focus:border-gold-400 focus:ring-4 focus:ring-primary-100/50 dark:focus:ring-gold-400/20 transition-all duration-300 placeholder-neutral-500 dark:placeholder-neutral-400 font-medium"
             />
 
             {/* Action Buttons */}
-            <div className="absolute right-2 flex items-center gap-2">
+            <div className="absolute right-3 flex items-center gap-3">
               {/* Voice Input Button */}
               <motion.button
                 onClick={onVoiceInput}
                 disabled={isListening}
-                className={`p-3 rounded-xl transition-all duration-200 ${
+                className={`p-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg ${
                   isListening 
                     ? 'bg-error-100 text-error-600 dark:bg-error-900/30 dark:text-error-400' 
                     : 'bg-primary-50 text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50'
                 }`}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 title={isListening ? "Listening..." : "Voice Input"}
               >
                 {isListening ? (
-                  <MicOff className="w-5 h-5 animate-pulse" />
+                  <MicOff className="w-6 h-6 animate-pulse" />
                 ) : (
-                  <Mic className="w-5 h-5" />
+                  <Mic className="w-6 h-6" />
                 )}
               </motion.button>
 
               {/* Filter Button */}
               <motion.button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`p-3 rounded-xl transition-all duration-200 ${
+                className={`p-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg ${
                   showFilters || selectedFilters.length > 0
                     ? 'bg-secondary-100 text-secondary-600 dark:bg-secondary-900/30 dark:text-secondary-400'
                     : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 dark:bg-navy-700 dark:text-neutral-400 dark:hover:bg-navy-600'
                 }`}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 title="Filters"
               >
-                <Filter className="w-5 h-5" />
+                <Filter className="w-6 h-6" />
                 {selectedFilters.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 w-6 h-6 bg-secondary-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
                     {selectedFilters.length}
                   </span>
                 )}
@@ -177,25 +177,25 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <motion.button
                 onClick={onSearch}
                 disabled={isLoading || !value.trim()}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center gap-2 ${
+                className={`px-8 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl ${
                   isLoading || !value.trim()
                     ? 'bg-neutral-200 text-neutral-400 dark:bg-navy-700 dark:text-neutral-500 cursor-not-allowed'
-                    : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl'
+                    : 'bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800'
                 }`}
-                whileHover={!isLoading && value.trim() ? { scale: 1.02 } : {}}
+                whileHover={!isLoading && value.trim() ? { scale: 1.05, y: -2 } : {}}
                 whileTap={!isLoading && value.trim() ? { scale: 0.98 } : {}}
               >
                 {isLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span className="hidden sm:inline">Searching...</span>
-                    <span className="sm:hidden">...</span>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="hidden sm:inline text-lg">Searching...</span>
+                    <span className="sm:hidden text-lg">...</span>
                   </>
                 ) : (
                   <>
-                    <Search className="w-4 h-4" />
-                    <span className="hidden sm:inline">{t('home.findCode') || 'Find Code'}</span>
-                    <span className="sm:hidden">Search</span>
+                    <Search className="w-5 h-5" />
+                    <span className="hidden sm:inline text-lg">{t('home.findCode') || 'Find Code'}</span>
+                    <span className="sm:hidden text-lg">Search</span>
                   </>
                 )}
               </motion.button>
