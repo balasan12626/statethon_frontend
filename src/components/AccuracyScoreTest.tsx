@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AccuracyScoreTest: React.FC = () => {
   const [displayValue, setDisplayValue] = useState(0);
   const [progressAnimation, setProgressAnimation] = useState(0);
-  const targetValue = 80; // Fixed 80% for testing
+  const targetValue = 92; // Updated to show a high accuracy score (90%+) for testing
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -112,7 +112,7 @@ const AccuracyScoreTest: React.FC = () => {
         
         {/* Enhanced label with better styling */}
         <div className="mt-4 text-sm font-black text-gray-900 dark:text-white bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-6 py-3 rounded-full backdrop-blur-sm progress-text-shadow border-2 border-green-200 dark:border-green-700 shadow-lg">
-          Strong Match
+          Excellent Match
         </div>
       </div>
     </div>

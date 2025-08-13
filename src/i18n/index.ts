@@ -22,6 +22,8 @@ const resources = {
       'nav.contact': 'Contact',
       'nav.logo': 'Indian NCO',
       'nav.subtitle': 'National Classification of Occupations',
+      'language.search': 'Search languages...',
+      'language.auto': 'Auto-detect',
     }
   },
   hi: {
@@ -44,6 +46,8 @@ const resources = {
       'nav.contact': 'संपर्क',
       'nav.logo': 'भारतीय NCO',
       'nav.subtitle': 'राष्ट्रीय व्यवसाय वर्गीकरण',
+      'language.search': 'भाषाएं खोजें...',
+      'language.auto': 'स्वतः पता लगाएं',
     }
   },
   bn: {
@@ -66,6 +70,8 @@ const resources = {
       'nav.contact': 'যোগাযোগ',
       'nav.logo': 'ভারতীয় NCO',
       'nav.subtitle': 'জাতীয় পেশা শ্রেণীবিভাগ',
+      'language.search': 'ভাষা অনুসন্ধান করুন...',
+      'language.auto': 'স্বয়ংক্রিয় সনাক্তকরণ',
     }
   },
   ta: {
@@ -88,6 +94,8 @@ const resources = {
       'nav.contact': 'தொடர்பு',
       'nav.logo': 'இந்திய NCO',
       'nav.subtitle': 'தேசிய தொழில் வகைப்பாடு',
+      'language.search': 'மொழிகளைத் தேடுங்கள்...',
+      'language.auto': 'தானாக கண்டறியவும்',
     }
   }
 };
@@ -98,9 +106,28 @@ i18n
     resources,
     lng: 'en', // default language
     fallbackLng: 'en',
+    debug: true, // Enable debug mode to see what's happening
     interpolation: {
       escapeValue: false, // react already safes from xss
     },
+    react: {
+      useSuspense: false, // Disable suspense to avoid issues
+    },
+    keySeparator: false, // Disable key separator
+    nsSeparator: false, // Disable namespace separator
   });
+
+// Ensure i18n is ready
+i18n.on('initialized', () => {
+  console.log('i18n initialized successfully');
+});
+
+i18n.on('loaded', () => {
+  console.log('i18n loaded successfully');
+});
+
+i18n.on('failedLoading', (lng, ns, msg) => {
+  console.error('i18n failed loading:', lng, ns, msg);
+});
 
 export default i18n;

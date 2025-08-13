@@ -1,16 +1,24 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, Mic, Filter, Clock, TrendingUp, Sparkles, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Search, 
+  Mic, 
+  MicOff, 
+  Filter, 
+  X, 
+  Sparkles,
+  TrendingUp,
+  Users,
+  Building,
+  MapPin,
+  Briefcase,
+  GraduationCap,
+  Heart,
+  Zap,
+  Globe,
+  Target
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { debounce } from '../utils/debounce';
-
-interface SearchSuggestion {
-  id: string;
-  text: string;
-  category: string;
-  icon: string;
-  popularity: number;
-}
 
 interface AdvancedSearchProps {
   value: string;
@@ -19,7 +27,13 @@ interface AdvancedSearchProps {
   isLoading: boolean;
   isListening: boolean;
   onVoiceInput: () => void;
-  // backendStatus removed
+}
+
+interface FilterOption {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  category: string;
 }
 
 const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
@@ -31,395 +45,290 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   onVoiceInput
 }) => {
   const { t } = useTranslation();
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [filters, setFilters] = useState({
-    industry: '',
-    experience: '',
-    education: '',
-    location: ''
-  });
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const searchRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  // Mock suggestions data
-  const mockSuggestions: SearchSuggestion[] = [
-    { id: '1', text: 'Software Developer', category: 'Technology', icon: '💻', popularity: 95 },
-    { id: '2', text: 'Data Scientist', category: 'Technology', icon: '📊', popularity: 90 },
-    { id: '3', text: 'Digital Marketing Specialist', category: 'Marketing', icon: '📱', popularity: 85 },
-    { id: '4', text: 'Financial Analyst', category: 'Finance', icon: '💰', popularity: 80 },
-    { id: '5', text: 'Project Manager', category: 'Management', icon: '📋', popularity: 88 },
-    { id: '6', text: 'UX/UI Designer', category: 'Design', icon: '🎨', popularity: 82 },
-    { id: '7', text: 'Cybersecurity Specialist', category: 'Technology', icon: '🔒', popularity: 87 },
-    { id: '8', text: 'Machine Learning Engineer', category: 'Technology', icon: '🤖', popularity: 92 },
+  // Filter options
+  const filterOptions: FilterOption[] = [
+    { id: 'education', label: 'Education', icon: <GraduationCap className="w-4 h-4" />, category: 'Sector' },
+    { id: 'technology', label: 'Technology', icon: <Zap className="w-4 h-4" />, category: 'Sector' },
+    { id: 'healthcare', label: 'Healthcare', icon: <Heart className="w-4 h-4" />, category: 'Sector' },
+    { id: 'finance', label: 'Finance', icon: <TrendingUp className="w-4 h-4" />, category: 'Sector' },
+    { id: 'government', label: 'Government', icon: <Building className="w-4 h-4" />, category: 'Sector' },
+    { id: 'high-demand', label: 'High Demand', icon: <Users className="w-4 h-4" />, category: 'Demand' },
+    { id: 'growth', label: 'Growth Sector', icon: <TrendingUp className="w-4 h-4" />, category: 'Demand' },
+    { id: 'remote', label: 'Remote Work', icon: <Globe className="w-4 h-4" />, category: 'Work Type' },
+    { id: 'entry-level', label: 'Entry Level', icon: <Target className="w-4 h-4" />, category: 'Experience' },
+    { id: 'senior', label: 'Senior Level', icon: <Briefcase className="w-4 h-4" />, category: 'Experience' }
   ];
 
-  // Load search history from localStorage
-  useEffect(() => {
-    const history = localStorage.getItem('nco-search-history');
-    if (history) {
-      setSearchHistory(JSON.parse(history));
-    }
-  }, []);
+  // Search suggestions
+  const searchSuggestions = [
+    "I teach children in primary school",
+    "I develop mobile applications",
+    "I install solar panels and fix inverters",
+    "I manage a team of software developers",
+    "I provide healthcare services to patients",
+    "I analyze financial data and create reports",
+    "I design user interfaces for websites",
+    "I conduct research in biotechnology",
+    "I manage government projects and policies",
+    "I provide legal consultation and advice"
+  ];
 
-  // Debounced search suggestions
-  const debouncedSearch = useCallback(
-    debounce((query: string) => {
-      if (query.length >= 2) {
-        const filtered = mockSuggestions.filter(suggestion =>
-          suggestion.text.toLowerCase().includes(query.toLowerCase()) ||
-          suggestion.category.toLowerCase().includes(query.toLowerCase())
-        );
-        setSuggestions(filtered.slice(0, 6));
-        setShowSuggestions(true);
-      } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-      }
-    }, 300),
-    []
-  );
-
-  useEffect(() => {
-    debouncedSearch(value);
-  }, [value, debouncedSearch]);
-
-  // Click outside to close suggestions
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSuggestionClick = (suggestion: SearchSuggestion) => {
-    onChange(suggestion.text);
-    setShowSuggestions(false);
-    inputRef.current?.focus();
+  const handleFilterToggle = (filterId: string) => {
+    setSelectedFilters(prev => 
+      prev.includes(filterId) 
+        ? prev.filter(id => id !== filterId)
+        : [...prev, filterId]
+    );
   };
 
-  const handleHistoryClick = (historyItem: string) => {
-    onChange(historyItem);
+  const handleSuggestionClick = (suggestion: string) => {
+    onChange(suggestion);
     setShowSuggestions(false);
-    inputRef.current?.focus();
-  };
-
-  const handleSearch = () => {
-    if (value.trim()) {
-      // Save to search history
-      const newHistory = [value, ...searchHistory.filter(item => item !== value)].slice(0, 10);
-      setSearchHistory(newHistory);
-      localStorage.setItem('nco-search-history', JSON.stringify(newHistory));
-    }
-    onSearch();
-    setShowSuggestions(false);
-  };
-
-  const clearHistory = () => {
-    setSearchHistory([]);
-    localStorage.removeItem('nco-search-history');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSearch();
+    if (e.key === 'Enter' && !isLoading) {
+      onSearch();
     }
   };
 
+  const groupedFilters = filterOptions.reduce((acc, filter) => {
+    if (!acc[filter.category]) {
+      acc[filter.category] = [];
+    }
+    acc[filter.category].push(filter);
+    return acc;
+  }, {} as Record<string, FilterOption[]>);
+
   return (
-    <div className="relative" ref={searchRef}>
-      {/* Search Input Container */}
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-soft dark:shadow-hard border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:shadow-medium focus-within:shadow-medium focus-within:border-primary-500 dark:focus-within:border-primary-400">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent-500 rounded-full animate-pulse"></div>
-            </div>
-            <h2 className="text-xl font-semibold text-neutral-800 dark:text-white">
-              {t('home.describeJob')}
-            </h2>
-          </div>
-          
-
-        </div>
-
-        {/* Main Input Area */}
-        <div className="p-6">
-          <div className="space-y-4">
-            {/* Text Input */}
-            <div className="relative">
-              <textarea
-                ref={inputRef}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                onKeyPress={handleKeyPress}
-                onFocus={() => value.length >= 2 && setShowSuggestions(true)}
-                placeholder={t('home.placeholder')}
-                className="w-full h-32 px-4 py-3 bg-neutral-50 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-neutral-700 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 transition-all duration-200"
-              />
-              
-              {/* Character Counter */}
-              <div className="absolute bottom-3 right-3 text-xs text-neutral-400">
-                {value.length}/500
-              </div>
+    <div className="w-full max-w-4xl mx-auto">
+      {/* Main Search Container */}
+      <div className="relative">
+        {/* Search Input */}
+        <div className="relative">
+          <div className="relative flex items-center">
+            {/* Search Icon */}
+            <div className="absolute left-4 z-10">
+              <Search className="w-5 h-5 text-neutral-400" />
             </div>
 
-            {/* Action Buttons Row */}
-            <div className="flex flex-col sm:flex-row gap-4 items-end">
-              {/* Left side controls */}
-              <div className="flex items-center gap-3">
-                {/* Voice Input */}
-                <motion.button
-                  onClick={onVoiceInput}
-                  disabled={isListening}
-                  className={`flex items-center px-4 py-2.5 rounded-xl border transition-all duration-200 ${
-                    isListening 
-                      ? 'bg-error-50 dark:bg-error-900/20 border-error-300 dark:border-error-600 text-error-700 dark:text-error-400' 
-                      : 'bg-neutral-50 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Mic className={`w-4 h-4 mr-2 ${isListening ? 'animate-pulse' : ''}`} />
-                  {isListening ? t('home.listening') : t('home.voiceInput')}
-                </motion.button>
+            {/* Main Input */}
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                onChange(e.target.value);
+                setShowSuggestions(e.target.value.length > 0);
+              }}
+              onKeyPress={handleKeyPress}
+              onFocus={() => setShowSuggestions(value.length > 0)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              placeholder={t('home.describeJob') || "Describe your job or profession..."}
+              className="w-full pl-12 pr-32 py-4 lg:py-5 text-lg bg-white dark:bg-navy-800 border-2 border-neutral-200 dark:border-navy-600 rounded-2xl shadow-lg focus:border-primary-500 dark:focus:border-gold-400 focus:ring-4 focus:ring-primary-100 dark:focus:ring-gold-400/20 transition-all duration-200 placeholder-neutral-400 dark:placeholder-neutral-500"
+            />
 
-                {/* Filters Toggle */}
-                <motion.button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center px-4 py-2.5 rounded-xl border transition-all duration-200 ${
-                    showFilters
-                      ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600 text-primary-700 dark:text-primary-400'
-                      : 'bg-neutral-50 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filters
-                  {Object.values(filters).some(v => v) && (
-                    <span className="ml-2 bg-primary-500 text-white text-xs rounded-full px-2 py-0.5">
-                      {Object.values(filters).filter(v => v).length}
-                    </span>
-                  )}
-                </motion.button>
-              </div>
-              
-              {/* Search Button */}
+            {/* Action Buttons */}
+            <div className="absolute right-2 flex items-center gap-2">
+              {/* Voice Input Button */}
               <motion.button
-                onClick={handleSearch}
-                disabled={!value.trim() || isLoading}
-                className="flex items-center px-6 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-soft"
+                onClick={onVoiceInput}
+                disabled={isListening}
+                className={`p-3 rounded-xl transition-all duration-200 ${
+                  isListening 
+                    ? 'bg-error-100 text-error-600 dark:bg-error-900/30 dark:text-error-400' 
+                    : 'bg-primary-50 text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50'
+                }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                title={isListening ? "Listening..." : "Voice Input"}
+              >
+                {isListening ? (
+                  <MicOff className="w-5 h-5 animate-pulse" />
+                ) : (
+                  <Mic className="w-5 h-5" />
+                )}
+              </motion.button>
+
+              {/* Filter Button */}
+              <motion.button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-3 rounded-xl transition-all duration-200 ${
+                  showFilters || selectedFilters.length > 0
+                    ? 'bg-secondary-100 text-secondary-600 dark:bg-secondary-900/30 dark:text-secondary-400'
+                    : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 dark:bg-navy-700 dark:text-neutral-400 dark:hover:bg-navy-600'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                title="Filters"
+              >
+                <Filter className="w-5 h-5" />
+                {selectedFilters.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {selectedFilters.length}
+                  </span>
+                )}
+              </motion.button>
+
+              {/* Search Button */}
+              <motion.button
+                onClick={onSearch}
+                disabled={isLoading || !value.trim()}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center gap-2 ${
+                  isLoading || !value.trim()
+                    ? 'bg-neutral-200 text-neutral-400 dark:bg-navy-700 dark:text-neutral-500 cursor-not-allowed'
+                    : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl'
+                }`}
+                whileHover={!isLoading && value.trim() ? { scale: 1.02 } : {}}
+                whileTap={!isLoading && value.trim() ? { scale: 0.98 } : {}}
               >
                 {isLoading ? (
                   <>
-                    <div className="w-5 h-5 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Analyzing...
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Searching...</span>
+                    <span className="sm:hidden">...</span>
                   </>
                 ) : (
                   <>
-                    <Zap className="w-5 h-5 mr-2" />
-                    {t('home.findCode')}
+                    <Search className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t('home.findCode') || 'Find Code'}</span>
+                    <span className="sm:hidden">Search</span>
                   </>
                 )}
               </motion.button>
             </div>
           </div>
+
+          {/* Search Suggestions */}
+          {showSuggestions && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-navy-800 border border-neutral-200 dark:border-navy-600 rounded-2xl shadow-2xl z-50 max-h-64 overflow-y-auto"
+            >
+              <div className="p-4">
+                <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary-500" />
+                  Popular Searches
+                </h4>
+                <div className="space-y-2">
+                  {searchSuggestions
+                    .filter(suggestion => 
+                      suggestion.toLowerCase().includes(value.toLowerCase())
+                    )
+                    .slice(0, 5)
+                    .map((suggestion, index) => (
+                      <motion.button
+                        key={index}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className="w-full text-left p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-navy-700 transition-colors text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-gold-400"
+                        whileHover={{ x: 4 }}
+                      >
+                        {suggestion}
+                      </motion.button>
+                    ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
-        {/* Advanced Filters */}
+        {/* Filters Panel */}
         <AnimatePresence>
           {showFilters && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700/50"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 bg-white dark:bg-navy-800 border border-neutral-200 dark:border-navy-600 rounded-2xl shadow-lg overflow-hidden"
             >
               <div className="p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                      Industry
-                    </label>
-                    <select 
-                      value={filters.industry}
-                      onChange={(e) => setFilters({...filters, industry: e.target.value})}
-                      className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-primary-600" />
+                    Filters
+                  </h3>
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-navy-700 transition-colors"
+                  >
+                    <X className="w-5 h-5 text-neutral-500" />
+                  </button>
+                </div>
+
+                {/* Filter Groups */}
+                <div className="space-y-6">
+                  {Object.entries(groupedFilters).map(([category, filters]) => (
+                    <div key={category}>
+                      <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-400 mb-3 uppercase tracking-wide">
+                        {category}
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {filters.map((filter) => (
+                          <motion.button
+                            key={filter.id}
+                            onClick={() => handleFilterToggle(filter.id)}
+                            className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center gap-2 text-sm font-medium ${
+                              selectedFilters.includes(filter.id)
+                                ? 'border-primary-500 bg-primary-50 text-primary-700 dark:border-gold-400 dark:bg-gold-400/10 dark:text-gold-400'
+                                : 'border-neutral-200 dark:border-navy-600 text-neutral-700 dark:text-neutral-300 hover:border-primary-300 dark:hover:border-gold-500/50'
+                            }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            {filter.icon}
+                            {filter.label}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Filter Actions */}
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-neutral-200 dark:border-navy-600">
+                  <button
+                    onClick={() => setSelectedFilters([])}
+                    className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                      {selectedFilters.length} selected
+                    </span>
+                    <motion.button
+                      onClick={() => setShowFilters(false)}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <option value="">All Industries</option>
-                      <option value="technology">Technology</option>
-                      <option value="healthcare">Healthcare</option>
-                      <option value="finance">Finance</option>
-                      <option value="education">Education</option>
-                      <option value="manufacturing">Manufacturing</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                      Experience
-                    </label>
-                    <select 
-                      value={filters.experience}
-                      onChange={(e) => setFilters({...filters, experience: e.target.value})}
-                      className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">All Levels</option>
-                      <option value="entry">Entry Level (0-2 years)</option>
-                      <option value="mid">Mid Level (3-5 years)</option>
-                      <option value="senior">Senior Level (6+ years)</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                      Education
-                    </label>
-                    <select 
-                      value={filters.education}
-                      onChange={(e) => setFilters({...filters, education: e.target.value})}
-                      className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">All Education</option>
-                      <option value="highschool">High School</option>
-                      <option value="diploma">Diploma</option>
-                      <option value="bachelor">Bachelor's Degree</option>
-                      <option value="master">Master's Degree</option>
-                      <option value="phd">PhD</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                      Location
-                    </label>
-                    <select 
-                      value={filters.location}
-                      onChange={(e) => setFilters({...filters, location: e.target.value})}
-                      className="w-full px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">All Cities</option>
-                      <option value="mumbai">Mumbai</option>
-                      <option value="delhi">Delhi</option>
-                      <option value="bangalore">Bangalore</option>
-                      <option value="chennai">Chennai</option>
-                      <option value="kolkata">Kolkata</option>
-                      <option value="hyderabad">Hyderabad</option>
-                      <option value="pune">Pune</option>
-                    </select>
+                      Apply Filters
+                    </motion.button>
                   </div>
                 </div>
-                
-                {/* Clear Filters */}
-                {Object.values(filters).some(v => v) && (
-                  <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-600">
-                    <button
-                      onClick={() => setFilters({ industry: '', experience: '', education: '', location: '' })}
-                      className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
-                    >
-                      Clear all filters
-                    </button>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Suggestions Dropdown */}
-      <AnimatePresence>
-        {showSuggestions && (suggestions.length > 0 || searchHistory.length > 0) && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-800 rounded-2xl shadow-hard border border-neutral-200 dark:border-neutral-700 z-50 max-h-96 overflow-y-auto"
-          >
-            {/* Search History */}
-            {searchHistory.length > 0 && value.length < 2 && (
-              <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    Recent Searches
-                  </h4>
-                  <button
-                    onClick={clearHistory}
-                    className="text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
-                  >
-                    Clear
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {searchHistory.slice(0, 5).map((item, index) => (
-                    <motion.button
-                      key={index}
-                      onClick={() => handleHistoryClick(item)}
-                      className="w-full text-left px-3 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded-lg transition-colors"
-                      whileHover={{ x: 5 }}
-                    >
-                      {item}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Smart Suggestions */}
-            {suggestions.length > 0 && (
-              <div className="p-4">
-                <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Smart Suggestions
-                </h4>
-                <div className="space-y-1">
-                  {suggestions.map((suggestion) => (
-                    <motion.button
-                      key={suggestion.id}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full flex items-center gap-3 px-3 py-3 text-left hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded-lg transition-colors group"
-                      whileHover={{ x: 5 }}
-                    >
-                      <span className="text-xl">{suggestion.icon}</span>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-neutral-800 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400">
-                          {suggestion.text}
-                        </div>
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                          {suggestion.category}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3 text-accent-500" />
-                        <span className="text-xs text-accent-600 dark:text-accent-400 font-medium">
-                          {suggestion.popularity}%
-                        </span>
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Quick Tips */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="mt-6 text-center"
+      >
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 flex items-center justify-center gap-2">
+          <Target className="w-4 h-4" />
+          Tip: Be specific about your role, responsibilities, and industry for better matches
+        </p>
+      </motion.div>
     </div>
   );
 };

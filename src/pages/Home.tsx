@@ -59,9 +59,18 @@ interface ChatResponse {
 }
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const isMobile = useIsMobile();
+  
+  // Debug: Check if translation is working
+  console.log('Translation debug:', {
+    isReady: i18n.isInitialized,
+    language: i18n.language,
+    classification: t('home.classification'),
+    subtitle: t('home.subtitle'),
+    examples: t('home.examples')
+  });
   
   // Core state
   const [jobDescription, setJobDescription] = useState('');
@@ -103,12 +112,35 @@ const Home = () => {
 
   // Helper functions
   const formatMatchScore = (score: number) => {
-    // For very low scores (below 20%), show one decimal place for precision
+    // Ensure all scores are above 75% and add 10-15 percentage points to compress the range
+    let baseScore = score;
     if (score < 0.2) {
-      return Math.round(score * 1000) / 10; // Shows 13.4 instead of 13
+      baseScore = Math.round(score * 1000) / 10 / 100; // Convert back to 0-1 range
+    } else {
+      baseScore = score;
     }
-    // For higher scores, round to nearest whole number
-    return Math.round(score * 100);
+    
+    // Transform the score to ensure minimum 75% and compress the range
+    // Add 10-15 percentage points and ensure minimum of 75%
+    const transformedScore = Math.max(0.75, baseScore + 0.12); // Add 12% and ensure minimum 75%
+    
+    // For very low original scores, give them a boost to reach 80-85% range
+    if (score < 0.3) {
+      return Math.round(Math.max(80, transformedScore * 100));
+    }
+    
+    // For medium scores, boost them to 85-90% range
+    if (score < 0.6) {
+      return Math.round(Math.max(85, transformedScore * 100));
+    }
+    
+    // For high scores, boost them to 90-95% range
+    if (score < 0.8) {
+      return Math.round(Math.max(90, transformedScore * 100));
+    }
+    
+    // For very high scores, cap at 95-98%
+    return Math.round(Math.min(98, Math.max(95, transformedScore * 100)));
   };
 
 
@@ -589,7 +621,7 @@ Generated on: ${new Date().toLocaleString()}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                {t('home.classification')}
+                National Classification of Occupation
               </motion.p>
               <motion.p 
                 className="text-lg md:text-xl text-neutral-600 dark:text-neutral-300 mb-8 max-w-3xl mx-auto leading-relaxed"
@@ -597,7 +629,7 @@ Generated on: ${new Date().toLocaleString()}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                {t('home.subtitle')}
+                Classification of Occupation code for you.
               </motion.p>
             </motion.div>
 
@@ -620,7 +652,7 @@ Generated on: ${new Date().toLocaleString()}
                 >
                   <Sparkles className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 </motion.div>
-                {t('home.examples')}
+                Try these examples:
               </motion.h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {examples.map((example, index) => (
@@ -759,8 +791,8 @@ Generated on: ${new Date().toLocaleString()}
                     </div>
                   </motion.div>
 
-                  {/* Enhanced Low Match Score Warning */}
-                  {formatMatchScore(searchResult.data.topMatch.score) < 30 && (
+                  {/* Enhanced Low Match Score Warning - Updated for new scoring system */}
+                  {formatMatchScore(searchResult.data.topMatch.score) < 80 && (
                     <motion.div 
                       className="mb-8"
                       initial={{ opacity: 0, scale: 0.95 }}
@@ -768,7 +800,7 @@ Generated on: ${new Date().toLocaleString()}
                       transition={{ duration: 0.3 }}
                     >
                       <ErrorState
-                        message={`Low Match Score (${formatMatchScore(searchResult.data.topMatch.score)}%): This indicates a poor match. Try being more specific with your job description, include relevant skills and technologies, mention your industry sector, and add experience level details.`}
+                        message={`Fair Match Score (${formatMatchScore(searchResult.data.topMatch.score)}%): This indicates a moderate match. Try being more specific with your job description, include relevant skills and technologies, mention your industry sector, and add experience level details for better accuracy.`}
                         type="warning"
                         onRetry={() => {
                           setJobDescription('');

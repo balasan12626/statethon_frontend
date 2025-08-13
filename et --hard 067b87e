@@ -1,0 +1,5 @@
+[33maeea0f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m changing the ui
+[33m067b87e[m Remove PageTranslator, keep only chatbot floating button
+[33m91b9393[m Fix TypeScript errors for Netlify deployment
+[33md2c1e58[m updated the ui
+[33m2e4b9eb[m  ui changes
